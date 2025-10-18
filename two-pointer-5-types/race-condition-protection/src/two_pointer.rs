@@ -1,6 +1,7 @@
 //! Two-pointer algorithms with race condition and TOCTOU protection
 
 use crate::concurrent_utils::ThreadSafeArray;
+use crate::telemetry::{start_operation_timer, create_metrics, record_operation};
 use parking_lot::Mutex;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -19,7 +20,12 @@ use std::sync::Arc;
 /// # Returns
 /// * `Option<(usize, usize)>` - Indices of the two numbers that sum to target, or None
 pub fn concurrent_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
+    let start_time = start_operation_timer();
+    let mut loop_iterations = 0;
+    
     if nums.len() < 2 {
+        let metrics = create_metrics(start_time, 0, 0, 0);
+        record_operation(&metrics);
         return None;
     }
 
@@ -31,9 +37,14 @@ pub fn concurrent_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
     // Check all pairs - this ensures thread safety and consistent behavior
     for i in 0..nums.len() {
         for j in (i + 1)..nums.len() {
+            loop_iterations += 1;
+            
             // Check if another thread already found a solution
             if found.load(Ordering::Relaxed) {
-                break;
+                let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                record_operation(&metrics);
+                let result_guard = result.lock();
+                return *result_guard;
             }
 
             let sum = nums[i].wrapping_add(nums[j]);
@@ -43,11 +54,16 @@ pub fn concurrent_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
                     let mut result_guard = result.lock();
                     *result_guard = Some((i, j));
                 }
-                break;
+                let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                record_operation(&metrics);
+                let result_guard = result.lock();
+                return *result_guard;
             }
         }
     }
 
+    let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+    record_operation(&metrics);
     let result_guard = result.lock();
     *result_guard
 }
@@ -66,11 +82,16 @@ pub fn concurrent_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
 /// # Returns
 /// * `bool` - True if strings are equal, false otherwise
 pub fn concurrent_string_compare(a: &str, b: &str) -> bool {
+    let start_time = start_operation_timer();
+    let mut loop_iterations = 0;
+    
     let a_bytes = a.as_bytes();
     let b_bytes = b.as_bytes();
 
     // Early exit for different lengths (thread-safe)
     if a_bytes.len() != b_bytes.len() {
+        let metrics = create_metrics(start_time, 1, 0, 1);
+        record_operation(&metrics);
         return false;
     }
 
@@ -83,7 +104,11 @@ pub fn concurrent_string_compare(a: &str, b: &str) -> bool {
 
     // Compare each byte concurrently
     for i in 0..len {
+        loop_iterations += 1;
+        
         if mismatch_found.load(Ordering::Relaxed) {
+            let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+            record_operation(&metrics);
             return false;
         }
 
@@ -93,16 +118,23 @@ pub fn concurrent_string_compare(a: &str, b: &str) -> bool {
         if let (Some(a_val), Some(b_val)) = (a_byte, b_byte) {
             if a_val != b_val {
                 mismatch_found.store(true, Ordering::Relaxed);
+                let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                record_operation(&metrics);
                 return false;
             }
         } else {
             // Handle case where array was modified during access
             mismatch_found.store(true, Ordering::Relaxed);
+            let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+            record_operation(&metrics);
             return false;
         }
     }
 
-    !mismatch_found.load(Ordering::Relaxed)
+    let result = !mismatch_found.load(Ordering::Relaxed);
+    let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+    record_operation(&metrics);
+    result
 }
 
 /// Concurrently searches for a target value in a sorted array
@@ -119,14 +151,22 @@ pub fn concurrent_string_compare(a: &str, b: &str) -> bool {
 /// # Returns
 /// * `Option<usize>` - Index of the target value, or None
 pub fn concurrent_array_search(arr: &[i32], target: i32) -> Option<usize> {
+    let start_time = start_operation_timer();
+    let mut loop_iterations = 0;
+    
     let array = ThreadSafeArray::new(arr.to_vec());
     let found = AtomicBool::new(false);
     let result = Arc::new(Mutex::new(None));
 
     // Search concurrently
     for i in 0..arr.len() {
+        loop_iterations += 1;
+        
         if found.load(Ordering::Relaxed) {
-            break;
+            let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+            record_operation(&metrics);
+            let result_guard = result.lock();
+            return *result_guard;
         }
 
         if let Some(value) = array.get(i) {
@@ -134,14 +174,22 @@ pub fn concurrent_array_search(arr: &[i32], target: i32) -> Option<usize> {
                 let mut result_guard = result.lock();
                 *result_guard = Some(i);
                 found.store(true, Ordering::Relaxed);
-                break;
+                let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                record_operation(&metrics);
+                let result_guard = result.lock();
+                return *result_guard;
             }
         } else {
             // Handle case where array was modified during access
-            break;
+            let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+            record_operation(&metrics);
+            let result_guard = result.lock();
+            return *result_guard;
         }
     }
 
+    let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+    record_operation(&metrics);
     let result_guard = result.lock();
     *result_guard
 }
@@ -160,6 +208,9 @@ pub fn concurrent_array_search(arr: &[i32], target: i32) -> Option<usize> {
 /// # Returns
 /// * `Vec<i32>` - Intersection of the two arrays
 pub fn concurrent_sorted_intersection(arr1: &[i32], arr2: &[i32]) -> Vec<i32> {
+    let start_time = start_operation_timer();
+    let mut loop_iterations = 0;
+    
     let array1 = ThreadSafeArray::new(arr1.to_vec());
     let array2 = ThreadSafeArray::new(arr2.to_vec());
     let result = Arc::new(Mutex::new(Vec::new()));
@@ -169,6 +220,8 @@ pub fn concurrent_sorted_intersection(arr1: &[i32], arr2: &[i32]) -> Vec<i32> {
     let mut right = 0;
 
     while left < arr1.len() && right < arr2.len() {
+        loop_iterations += 1;
+        
         let val1 = match array1.get(left) {
             Some(val) => val,
             None => break, // Array was modified
@@ -191,6 +244,8 @@ pub fn concurrent_sorted_intersection(arr1: &[i32], arr2: &[i32]) -> Vec<i32> {
         }
     }
 
+    let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+    record_operation(&metrics);
     let result_guard = result.lock();
     result_guard.clone()
 }
