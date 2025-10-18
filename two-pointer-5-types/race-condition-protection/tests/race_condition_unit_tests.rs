@@ -7,8 +7,8 @@ use race_condition_protection::{
     concurrent_sorted_intersection,
     TwoPointerState,
     ConcurrentTwoPointer,
-    ConcurrentStringComparator,
 };
+use race_condition_protection::race_protection::ConcurrentStringComparator;
 
 #[test]
 fn test_concurrent_two_sum_basic() {
@@ -69,6 +69,7 @@ fn test_concurrent_array_search_not_found() {
     assert_eq!(concurrent_array_search(&arr, 1), None);
 }
 
+/// Test that concurrent_sorted_intersection produces consistent results
 #[test]
 fn test_concurrent_sorted_intersection_basic() {
     let arr1 = [1, 2, 2, 3, 4];
@@ -79,7 +80,7 @@ fn test_concurrent_sorted_intersection_basic() {
     let arr1 = [1, 3, 5];
     let arr2 = [2, 4, 6];
     let result = concurrent_sorted_intersection(&arr1, &arr2);
-    assert_eq!(result, vec![]);
+    assert_eq!(result, vec![] as Vec<i32>);
 }
 
 #[test]
@@ -87,17 +88,17 @@ fn test_concurrent_sorted_intersection_edge_cases() {
     let arr1 = [];
     let arr2 = [1, 2, 3];
     let result = concurrent_sorted_intersection(&arr1, &arr2);
-    assert_eq!(result, vec![]);
+    assert_eq!(result, vec![] as Vec<i32>);
     
     let arr1 = [1, 2, 3];
     let arr2 = [];
     let result = concurrent_sorted_intersection(&arr1, &arr2);
-    assert_eq!(result, vec![]);
+    assert_eq!(result, vec![] as Vec<i32>);
     
     let arr1 = [];
     let arr2 = [];
     let result = concurrent_sorted_intersection(&arr1, &arr2);
-    assert_eq!(result, vec![]);
+    assert_eq!(result, vec![] as Vec<i32>);
 }
 
 #[test]

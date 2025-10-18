@@ -7,8 +7,8 @@ use race_condition_protection::{
     concurrent_sorted_intersection,
     TwoPointerState,
     ConcurrentTwoPointer,
-    ConcurrentStringComparator,
 };
+use race_condition_protection::race_protection::ConcurrentStringComparator;
 use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
 use std::thread;
 use std::time::Duration;
@@ -75,7 +75,7 @@ fn test_race_condition_resistance_string_comparison() {
                 if i % 2 == 0 {
                     thread::sleep(Duration::from_micros(i));
                 }
-                concurrent_string_compare(s1_clone, s2_clone)
+                concurrent_string_compare(&*s1_clone, &*s2_clone)
             })
         })
         .collect();
@@ -104,7 +104,7 @@ fn test_race_condition_resistance_array_search() {
                 if i % 3 == 0 {
                     thread::sleep(Duration::from_micros(i));
                 }
-                concurrent_array_search(&arr_clone, target)
+                concurrent_array_search(&*arr_clone, target)
             })
         })
         .collect();

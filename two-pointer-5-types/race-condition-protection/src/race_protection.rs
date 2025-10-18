@@ -84,7 +84,7 @@ impl TwoPointerState {
     pub fn reset(&self, data_len: usize) {
         self.left.store(0);
         self.right.store(data_len.saturating_sub(1));
-        self.active.store(true);
+        self.active.store(true, Ordering::Relaxed);
         self.operation_count.store(0, Ordering::Relaxed);
     }
 }

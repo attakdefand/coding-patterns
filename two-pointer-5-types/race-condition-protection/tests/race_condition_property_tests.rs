@@ -6,8 +6,8 @@ use race_condition_protection::{
     concurrent_array_search,
     concurrent_sorted_intersection,
     ConcurrentTwoPointer,
-    ConcurrentStringComparator,
 };
+use race_condition_protection::race_protection::ConcurrentStringComparator;
 use std::sync::Arc;
 use std::thread;
 
@@ -22,7 +22,7 @@ fn test_concurrent_two_sum_consistency() {
         .map(|_| {
             let nums_clone = Arc::clone(&nums);
             thread::spawn(move || {
-                concurrent_two_sum(&nums_clone, target)
+                concurrent_two_sum(&*nums_clone, target)
             })
         })
         .collect();
@@ -49,7 +49,7 @@ fn test_concurrent_string_compare_consistency() {
             let s1_clone = Arc::clone(&str1);
             let s2_clone = Arc::clone(&str2);
             thread::spawn(move || {
-                concurrent_string_compare(s1_clone, s2_clone)
+                concurrent_string_compare(&*s1_clone, &*s2_clone)
             })
         })
         .collect();
@@ -68,7 +68,7 @@ fn test_concurrent_string_compare_consistency() {
             let s1_clone = Arc::clone(&str1);
             let s3_clone = Arc::clone(&str3);
             thread::spawn(move || {
-                concurrent_string_compare(s1_clone, s3_clone)
+                concurrent_string_compare(&*s1_clone, &*s3_clone)
             })
         })
         .collect();
@@ -94,7 +94,7 @@ fn test_concurrent_array_search_consistency() {
         .map(|_| {
             let arr_clone = Arc::clone(&arr);
             thread::spawn(move || {
-                concurrent_array_search(&arr_clone, target)
+                concurrent_array_search(&*arr_clone, target)
             })
         })
         .collect();
@@ -112,7 +112,7 @@ fn test_concurrent_array_search_consistency() {
         .map(|_| {
             let arr_clone = Arc::clone(&arr);
             thread::spawn(move || {
-                concurrent_array_search(&arr_clone, not_found_target)
+                concurrent_array_search(&*arr_clone, not_found_target)
             })
         })
         .collect();
@@ -131,7 +131,7 @@ fn test_concurrent_array_search_consistency() {
 fn test_concurrent_sorted_intersection_consistency() {
     let arr1 = Arc::new([1, 2, 2, 3, 4, 5]);
     let arr2 = Arc::new([2, 2, 3, 6, 7]);
-    let expected = vec![2, 2, 3];
+    let expected: Vec<i32> = vec![2, 2, 3];
     
     // Run multiple threads concurrently
     let handles: Vec<_> = (0..10)
@@ -139,7 +139,7 @@ fn test_concurrent_sorted_intersection_consistency() {
             let arr1_clone = Arc::clone(&arr1);
             let arr2_clone = Arc::clone(&arr2);
             thread::spawn(move || {
-                concurrent_sorted_intersection(&arr1_clone, &arr2_clone)
+                concurrent_sorted_intersection(&*arr1_clone, &*arr2_clone)
             })
         })
         .collect();
@@ -212,12 +212,12 @@ fn test_edge_cases() {
     // Empty arrays
     assert_eq!(concurrent_two_sum(&[], 5), None);
     assert_eq!(concurrent_array_search(&[], 5), None);
-    assert_eq!(concurrent_sorted_intersection(&[], &[]), vec![]);
+    assert_eq!(concurrent_sorted_intersection(&[], &[]), vec![] as Vec<i32>);
     
     // Single element arrays
     assert_eq!(concurrent_two_sum(&[5], 5), None); // Need two elements
     assert_eq!(concurrent_array_search(&[5], 5), Some(0));
-    assert_eq!(concurrent_sorted_intersection(&[5], &[]), vec![]);
+    assert_eq!(concurrent_sorted_intersection(&[5], &[]), vec![] as Vec<i32>);
     
     // Large arrays
     let large_arr: Vec<i32> = (1..=1000).collect();

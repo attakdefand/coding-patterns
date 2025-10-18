@@ -1,6 +1,5 @@
 //! Two-pointer algorithms with race condition and TOCTOU protection
 
-use crate::race_protection::TwoPointerState;
 use crate::concurrent_utils::{AtomicCounter, ThreadSafeArray};
 use std::sync::Arc;
 use parking_lot::Mutex;
