@@ -10,6 +10,9 @@ use std::sync::Arc;
 // Conditional compilation for logging
 use log;
 
+/// Maximum allowed array length to prevent resource exhaustion
+const MAX_ALLOWED_LEN: usize = 1_000_000;
+
 /// Thread-safe state for two-pointer algorithms
 pub struct TwoPointerState {
     data: ThreadSafeArray<i32>,
@@ -137,6 +140,21 @@ pub struct ConcurrentTwoPointer {
 impl ConcurrentTwoPointer {
     /// Creates a new ConcurrentTwoPointer with the given data
     pub fn new(data: Vec<i32>) -> Self {
+        // Precondition check: maximum array size
+        if data.len() > MAX_ALLOWED_LEN {
+            log::warn!("Array size {} exceeds maximum allowed length {}", data.len(), MAX_ALLOWED_LEN);
+            // Create a smaller array with just the first MAX_ALLOWED_LEN elements
+            let truncated_data = data.into_iter().take(MAX_ALLOWED_LEN).collect();
+            let state = Arc::new(TwoPointerState::new(truncated_data));
+            state.init_right_pointer(state.data.len());
+            
+            return Self {
+                state,
+                result: Arc::new(Mutex::new(None)),
+                found: AtomicBool::new(false),
+            };
+        }
+        
         let state = Arc::new(TwoPointerState::new(data));
         state.init_right_pointer(state.data.len());
 
@@ -188,8 +206,9 @@ impl ConcurrentTwoPointer {
                 None => break, // Invalid state, possibly due to concurrent modification
             };
 
+            // Use saturating arithmetic to prevent overflow
             let (left_val, right_val) = values;
-            let sum = left_val.wrapping_add(right_val);
+            let sum = left_val.saturating_add(right_val);
 
             if sum == target {
                 // Found the target sum

@@ -9,6 +9,9 @@ use std::sync::Arc;
 
 use log;
 
+/// Maximum allowed array length to prevent resource exhaustion
+const MAX_ALLOWED_LEN: usize = 1_000_000;
+
 /// Concurrently finds two numbers in a sorted array that sum to a target value
 ///
 /// This implementation avoids race conditions and TOCTOU by:
@@ -29,18 +32,23 @@ pub fn concurrent_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
         return None;
     }
     
+    // Precondition check: minimum array size
+    if nums.len() < 2 {
+        return None;
+    }
+    
+    // Precondition check: maximum array size
+    if nums.len() > MAX_ALLOWED_LEN {
+        log::warn!("Array size {} exceeds maximum allowed length {}", nums.len(), MAX_ALLOWED_LEN);
+        return None;
+    }
+    
     // Start protected operation with resource tracking
     let _guard = start_protected_operation("default_client").ok();
     
     let start_time = start_operation_timer();
     let mut loop_iterations = 0;
     
-    if nums.len() < 2 {
-        let metrics = create_metrics(start_time, 0, 0, 0);
-        record_operation(&metrics);
-        return None;
-    }
-
     // For race condition safety, we'll check all pairs
     // This ensures consistent timing regardless of where the match is
     let found = AtomicBool::new(false);
@@ -70,7 +78,8 @@ pub fn concurrent_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
                 return *result_guard;
             }
 
-            let sum = nums[i].wrapping_add(nums[j]);
+            // Use saturating arithmetic to prevent overflow
+            let sum = nums[i].saturating_add(nums[j]);
             if sum == target {
                 // Use atomic flag to prevent multiple threads from setting result
                 if !found.swap(true, Ordering::Relaxed) {
@@ -119,6 +128,14 @@ pub fn concurrent_string_compare(a: &str, b: &str) -> bool {
     
     let a_bytes = a.as_bytes();
     let b_bytes = b.as_bytes();
+
+    // Precondition check: maximum string length
+    if a_bytes.len() > MAX_ALLOWED_LEN || b_bytes.len() > MAX_ALLOWED_LEN {
+        log::warn!("String length exceeds maximum allowed length");
+        let metrics = create_metrics(start_time, 1, 0, 1);
+        record_operation(&metrics);
+        return false;
+    }
 
     // Early exit for different lengths (thread-safe)
     if a_bytes.len() != b_bytes.len() {
