@@ -126,6 +126,18 @@ cargo test --test logical_invariant_property_tests
 cargo test --test logical_invariant_attack_defense_tests
 ```
 
+## GitHub Actions
+
+This repository includes several GitHub Actions workflows for automated code quality checks:
+
+1. **Code Quality** ([.github/workflows/code-quality.yml](.github/workflows/code-quality.yml)) - Runs formatting, linting, and security checks
+2. **Continuous Integration** ([.github/workflows/ci.yml](.github/workflows/ci.yml)) - Tests across multiple platforms and Rust versions
+3. **Security Audit** ([.github/workflows/security-audit.yml](.github/workflows/security-audit.yml)) - Checks for vulnerabilities in dependencies
+4. **Format and Lint** ([.github/workflows/format-lint.yml](.github/workflows/format-lint.yml)) - Automatically formats code and runs Clippy
+5. **Release** ([.github/workflows/release.yml](.github/workflows/release.yml)) - Manages crate publishing and GitHub releases
+
+These workflows ensure code quality, security, and consistency across all contributions. For detailed information about our code quality tools and configurations, see [CODE_QUALITY.md](CODE_QUALITY.md).
+
 ## Key Security Features
 
 1. **Assumption Validation**: All functions check their input assumptions

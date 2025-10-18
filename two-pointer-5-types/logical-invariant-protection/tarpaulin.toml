@@ -1,0 +1,10 @@
+[coverage]
+exclude-files = [
+    "target/*",
+    "tests/*",
+    "benches/*",
+    "examples/*"
+]
+
+[report]
+out = ["Html", "Xml"]

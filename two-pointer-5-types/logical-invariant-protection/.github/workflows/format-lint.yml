@@ -1,0 +1,56 @@
+name: Format and Lint
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: write
+
+jobs:
+  format-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Check code formatting
+        id: formatting
+        run: |
+          if ! cargo fmt -- --check; then
+            echo "formatting_needed=true" >> $GITHUB_OUTPUT
+          else
+            echo "formatting_needed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Auto-format code
+        if: steps.formatting.outputs.formatting_needed == 'true' && github.event_name == 'pull_request'
+        run: cargo fmt
+
+      - name: Commit formatted code
+        if: steps.formatting.outputs.formatting_needed == 'true' && github.event_name == 'pull_request'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "Auto-format code with rustfmt" || echo "No changes to commit"
+
+      - name: Push formatted code
+        if: steps.formatting.outputs.formatting_needed == 'true' && github.event_name == 'pull_request'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
+
+      - name: Run Clippy
+        run: cargo clippy -- -D warnings

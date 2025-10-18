@@ -1,0 +1,20 @@
+# Clippy configuration for the logical-invariant-protection project
+
+# Allow certain lints that are acceptable in this project
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+
+# Warn on unwrap/expect in non-test code
+warn-on-all-wraps = false
+
+# Cyclomatic complexity threshold
+cognitive-complexity-threshold = 25
+
+# Warn on functions with too many arguments
+too-many-arguments-threshold = 7
+
+# Warn on types with too many fields
+too-many-fields-threshold = 50
+
+# Enum variant size difference threshold
+enum-variant-size-threshold = 200

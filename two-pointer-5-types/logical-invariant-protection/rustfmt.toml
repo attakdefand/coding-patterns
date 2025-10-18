@@ -1,0 +1,43 @@
+# Rustfmt configuration for the logical-invariant-protection project
+
+# Maximum width of each line
+max_width = 100
+
+# Number of spaces per tab
+tab_spaces = 4
+
+# Use spaces for indentation
+hard_tabs = false
+
+# Width of the first column in a two-column format
+comment_width = 80
+
+# Wrap comments
+wrap_comments = true
+
+# Format doc comments
+format_doc_comments = true
+
+# Normalize comments into line comments
+normalize_comments = true
+
+# Merge imports
+merge_imports = true
+
+# Reorder imports
+reorder_imports = true
+
+# Reorder modules
+reorder_modules = true
+
+# Remove nested parens
+remove_nested_parens = true
+
+# Format code snippets in doc comments
+format_code_in_doc_comments = true
+
+# Report all, none or unformatted files
+error_on_line_overflow = false
+
+# Error when formatting fails
+error_on_unformatted = false
