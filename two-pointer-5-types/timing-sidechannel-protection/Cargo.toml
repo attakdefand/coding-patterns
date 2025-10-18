@@ -1,0 +1,18 @@
+[package]
+name = "timing-sidechannel-protection"
+version = "0.1.0"
+edition = "2021"
+authors = ["Security Researcher"]
+description = "Protection against timing side-channels in two-pointer algorithms"
+license = "MIT"
+
+[dependencies]
+# For constant-time comparison operations
+subtle = "2.4"
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "timing_benchmarks"
+harness = false
