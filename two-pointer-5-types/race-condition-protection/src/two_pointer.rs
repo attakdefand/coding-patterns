@@ -1,6 +1,6 @@
 //! Two-pointer algorithms with race condition and TOCTOU protection
 
-use crate::concurrent_utils::{AtomicCounter, ThreadSafeArray};
+use crate::concurrent_utils::ThreadSafeArray;
 use parking_lot::Mutex;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -198,7 +198,6 @@ pub fn concurrent_sorted_intersection(arr1: &[i32], arr2: &[i32]) -> Vec<i32> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::Arc;
     use std::thread;
 
     #[test]

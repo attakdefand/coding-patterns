@@ -1,6 +1,6 @@
 //! Benchmarks for race condition protection
 
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use race_condition_protection::{
     concurrent_array_search, concurrent_sorted_intersection, concurrent_string_compare,
     concurrent_two_sum,
@@ -88,7 +88,7 @@ fn bench_concurrent_access(c: &mut Criterion) {
             let handles: Vec<_> = (0..10)
                 .map(|_| {
                     let nums_clone = Arc::clone(&nums);
-                    thread::spawn(move || concurrent_two_sum(&nums_clone, target))
+                    thread::spawn(move || concurrent_two_sum(&nums_clone[..], target))
                 })
                 .collect();
 
