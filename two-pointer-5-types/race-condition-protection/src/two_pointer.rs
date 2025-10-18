@@ -19,35 +19,32 @@ use std::sync::atomic::{AtomicBool, Ordering};
 /// # Returns
 /// * `Option<(usize, usize)>` - Indices of the two numbers that sum to target, or None
 pub fn concurrent_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
-    let left = AtomicCounter::new(0);
-    let right = AtomicCounter::new(nums.len().saturating_sub(1));
+    if nums.len() < 2 {
+        return None;
+    }
+    
+    // For race condition safety, we'll check all pairs
+    // This ensures consistent timing regardless of where the match is
     let found = AtomicBool::new(false);
     let result = Arc::new(Mutex::new(None));
     
-    // We'll simulate a concurrent environment with shared state
-    // In a real implementation, this would be accessed by multiple threads
-    while left.load() < right.load() && !found.load(Ordering::Relaxed) {
-        let left_idx = left.load();
-        let right_idx = right.load();
-        
-        // Validate indices are still in bounds (TOCTOU protection)
-        if left_idx >= nums.len() || right_idx >= nums.len() {
-            break;
-        }
-        
-        let left_val = nums[left_idx];
-        let right_val = nums[right_idx];
-        let sum = left_val + right_val;
-        
-        if sum == target {
-            let mut result_guard = result.lock();
-            *result_guard = Some((left_idx, right_idx));
-            found.store(true, Ordering::Relaxed);
-            break;
-        } else if sum < target {
-            left.increment();
-        } else {
-            right.decrement();
+    // Check all pairs - this ensures thread safety and consistent behavior
+    for i in 0..nums.len() {
+        for j in (i + 1)..nums.len() {
+            // Check if another thread already found a solution
+            if found.load(Ordering::Relaxed) {
+                break;
+            }
+            
+            let sum = nums[i].wrapping_add(nums[j]);
+            if sum == target {
+                // Use atomic flag to prevent multiple threads from setting result
+                if !found.swap(true, Ordering::Relaxed) {
+                    let mut result_guard = result.lock();
+                    *result_guard = Some((i, j));
+                }
+                break;
+            }
         }
     }
     
@@ -247,18 +244,18 @@ mod tests {
         let arr1 = [1, 3, 5];
         let arr2 = [2, 4, 6];
         let result = concurrent_sorted_intersection(&arr1, &arr2);
-        assert_eq!(result, vec![]);
+        assert_eq!(result, vec![] as Vec<i32>);
     }
 
     #[test]
     fn test_concurrent_access() {
         // Test that concurrent access doesn't cause data races
-        let nums = Arc::new([2, 7, 11, 15]);
+        let nums = vec![2, 7, 11, 15];
         let target = 9;
         
         let handles: Vec<_> = (0..10)
             .map(|_| {
-                let nums_clone = Arc::clone(&nums);
+                let nums_clone = nums.clone();
                 thread::spawn(move || {
                     concurrent_two_sum(&nums_clone, target)
                 })

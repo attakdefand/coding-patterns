@@ -7,7 +7,6 @@ use race_condition_protection::{
     concurrent_sorted_intersection,
     ConcurrentTwoPointer,
 };
-use race_condition_protection::race_protection::ConcurrentStringComparator;
 use std::time::Instant;
 
 fn main() {
