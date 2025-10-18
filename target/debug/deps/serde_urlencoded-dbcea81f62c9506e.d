@@ -1,0 +1,11 @@
+D:\28-patterns-attack-defense\target\debug\deps\serde_urlencoded-dbcea81f62c9506e.d: C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\lib.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\de.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\mod.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\key.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\pair.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\part.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\value.rs
+
+D:\28-patterns-attack-defense\target\debug\deps\libserde_urlencoded-dbcea81f62c9506e.rmeta: C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\lib.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\de.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\mod.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\key.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\pair.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\part.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\value.rs
+
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\lib.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\de.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\mod.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\key.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\pair.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\part.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_urlencoded-0.7.1\src\ser\value.rs:

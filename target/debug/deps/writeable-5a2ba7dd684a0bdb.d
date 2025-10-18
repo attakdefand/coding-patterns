@@ -1,0 +1,12 @@
+D:\28-patterns-attack-defense\target\debug\deps\writeable-5a2ba7dd684a0bdb.d: C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\lib.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\cmp.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\impls.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\ops.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\parts_write_adapter.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\testing.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\to_string_or_borrow.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\try_writeable.rs
+
+D:\28-patterns-attack-defense\target\debug\deps\libwriteable-5a2ba7dd684a0bdb.rmeta: C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\lib.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\cmp.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\impls.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\ops.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\parts_write_adapter.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\testing.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\to_string_or_borrow.rs C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\try_writeable.rs
+
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\lib.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\cmp.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\impls.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\ops.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\parts_write_adapter.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\testing.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\to_string_or_borrow.rs:
+C:\Users\RMT\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\writeable-0.6.1\src\try_writeable.rs:

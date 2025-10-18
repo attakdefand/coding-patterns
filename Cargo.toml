@@ -7,6 +7,7 @@ members = [
     "two-pointer-5-types/infinite-loop-protection",
     "two-pointer-5-types/race-condition-protection",
     "two-pointer-5-types/timing-sidechannel-protection",
+    "two-pointer-5-types/race-condition-protection/web-interface",
 ]
 
 [package]

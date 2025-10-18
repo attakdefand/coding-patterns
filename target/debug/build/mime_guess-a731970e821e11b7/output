@@ -1,0 +1,1 @@
+cargo:rustc-env=MIME_TYPES_GENERATED_PATH=D:\28-patterns-attack-defense\target\debug\build\mime_guess-a731970e821e11b7\out\mime_types_generated.rs
