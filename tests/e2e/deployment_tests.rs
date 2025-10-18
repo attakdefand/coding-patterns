@@ -7,14 +7,15 @@ mod tests {
         // Test that the final artifacts are created correctly
         let output = Command::new("cargo")
             .args(&["build", "--release"])
+            .current_dir("./two-pointer-project")
             .output()
             .expect("Failed to execute cargo build --release");
 
         assert!(output.status.success());
 
-        // Check that executable exists
-        let executable_exists = std::path::Path::new("./target/release/two-pointer-project").exists() ||
-            std::path::Path::new("./target/release/two-pointer-project.exe").exists();
+        // Check that executable exists in the correct directory
+        let executable_exists = std::path::Path::new("./two-pointer-project/target/debug/two-pointer-project.exe").exists() ||
+            std::path::Path::new("./two-pointer-project/target/debug/two-pointer-project").exists();
         assert!(executable_exists, "Executable not found");
     }
 
@@ -23,9 +24,9 @@ mod tests {
         // Test that the built artifact can be executed
         // This assumes a CLI interface exists
         let executable_path = if cfg!(windows) {
-            "./target/release/two-pointer-project.exe"
+            "./two-pointer-project/target/debug/two-pointer-project.exe"
         } else {
-            "./target/release/two-pointer-project"
+            "./two-pointer-project/target/debug/two-pointer-project"
         };
 
         if std::path::Path::new(executable_path).exists() {
