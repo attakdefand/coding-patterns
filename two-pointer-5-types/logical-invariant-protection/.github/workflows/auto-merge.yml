@@ -1,0 +1,81 @@
+name: Auto Merge
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  schedule:
+    # Check for automerge every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for automerge label
+        id: check_label
+        run: |
+          # Check if PR has 'automerge' label
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          if [ "$PR_NUMBER" != "null" ]; then
+            LABELS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" \
+              | jq -r '.[].name')
+            
+            if echo "$LABELS" | grep -q "automerge"; then
+              echo "has_automerge_label=true" >> $GITHUB_OUTPUT
+            else
+              echo "has_automerge_label=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "has_automerge_label=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check CI status
+        if: steps.check_label.outputs.has_automerge_label == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+            
+            const { data: checks } = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: pr.head.sha
+            });
+            
+            const allChecksPassed = checks.check_runs.every(check => 
+              check.conclusion === 'success' || check.conclusion === 'neutral'
+            );
+            
+            if (allChecksPassed) {
+              console.log('All checks passed, merging PR');
+              await github.rest.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                merge_method: 'squash'
+              });
+            } else {
+              console.log('Not all checks passed, skipping merge');
+            }
+
+      - name: Auto-approve PRs from trusted authors
+        if: github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'github-actions[bot]'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              event: 'APPROVE',
+              body: 'Approved by auto-merge workflow for trusted author'
+            })

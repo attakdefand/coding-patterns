@@ -135,6 +135,9 @@ This repository includes several GitHub Actions workflows for automated code qua
 3. **Security Audit** ([.github/workflows/security-audit.yml](.github/workflows/security-audit.yml)) - Checks for vulnerabilities in dependencies
 4. **Format and Lint** ([.github/workflows/format-lint.yml](.github/workflows/format-lint.yml)) - Automatically formats code and runs Clippy
 5. **Release** ([.github/workflows/release.yml](.github/workflows/release.yml)) - Manages crate publishing and GitHub releases
+6. **Auto Pull** ([.github/workflows/auto-pull.yml](.github/workflows/auto-pull.yml)) - Automatically pulls changes every 10 minutes
+7. **Auto Sync** ([.github/workflows/auto-sync.yml](.github/workflows/auto-sync.yml)) - Comprehensive synchronization with remote repository
+8. **Auto Merge** ([.github/workflows/auto-merge.yml](.github/workflows/auto-merge.yml)) - Automatically merges pull requests under certain conditions
 
 These workflows ensure code quality, security, and consistency across all contributions. For detailed information about our code quality tools and configurations, see [CODE_QUALITY.md](CODE_QUALITY.md).
 

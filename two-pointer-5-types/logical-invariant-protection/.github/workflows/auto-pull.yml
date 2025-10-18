@@ -1,0 +1,38 @@
+name: Auto Pull
+
+on:
+  schedule:
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  auto-pull:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0 # Fetch all history for all branches and tags
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Pull latest changes
+        run: |
+          git pull origin main --ff-only || echo "No fast-forward possible"
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet && echo "changed=false" >> $GITHUB_OUTPUT || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push if changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git add .
+          git commit -m "Auto-sync: Pull updates $(date)"
+          git push origin main
