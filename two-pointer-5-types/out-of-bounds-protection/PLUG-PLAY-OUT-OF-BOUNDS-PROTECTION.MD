@@ -176,4 +176,3 @@ Use the structure and patterns as a template for implementing new secure algorit
 
 The out-of-bounds protection implementations are designed to be modular and reusable, making it easy to integrate security into your own projects while maintaining the efficiency of two-pointer algorithms.
 
-ssh-keygen -t ed25519 -C "attakdefand@example.com"
