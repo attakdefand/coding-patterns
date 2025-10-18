@@ -94,10 +94,13 @@ fn test_timing_attack_resistance_array_search() {
     let ratio = (max_time as f64) / (min_time as f64);
     assert!(ratio < 10.0, "Potential timing leak in array search: max/min ratio = {}", ratio);
     
-    // Verify all elements were found
-    for (i, (_, result, _)) in times.iter().enumerate() {
-        assert_eq!(*result, Some(i)); // 1 is at index 0, 25 at index 24, etc.
-    }
+    // Verify all elements were found (correcting the expected indices)
+    // 1 is at index 0, 25 at index 24, 50 at index 49, 75 at index 74, 100 at index 99
+    assert_eq!(times[0].1, Some(0));   // 1 is at index 0
+    assert_eq!(times[1].1, Some(24));  // 25 is at index 24
+    assert_eq!(times[2].1, Some(49));  // 50 is at index 49
+    assert_eq!(times[3].1, Some(74));  // 75 is at index 74
+    assert_eq!(times[4].1, Some(99));  // 100 is at index 99
 }
 
 /// Test that intersection operation doesn't leak timing information

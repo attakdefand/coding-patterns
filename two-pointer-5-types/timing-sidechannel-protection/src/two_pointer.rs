@@ -1,6 +1,6 @@
 //! Two-pointer algorithms with timing side-channel protection
 
-use subtle::{Choice, ConstantTimeEq, ConstantTimeGreater, ConstantTimeLess};
+use subtle::{Choice, ConstantTimeEq};
 
 /// Securely finds two numbers in a sorted array that sum to a target value
 /// 
@@ -20,53 +20,24 @@ pub fn secure_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
         return None;
     }
 
-    let mut left = 0;
-    let mut right = nums.len() - 1;
-    let mut result_indices: Option<(usize, usize)> = None;
+    // For timing safety, we'll process all pairs to avoid leaking information
+    // about which pair sums to target
+    let mut result: Option<(usize, usize)> = None;
     
-    // We'll iterate through all possible combinations to avoid timing leaks
-    // This ensures constant time execution regardless of where the match is found
-    while left < right {
-        let left_val = nums[left];
-        let right_val = nums[right];
-        let sum = left_val + right_val;
-        
-        // Constant-time comparison
-        let is_match = sum.ct_eq(&target);
-        
-        // Only update result if we found a match (but continue iterating)
-        let new_result = (left, right);
-        result_indices = if is_match.into() {
-            Some(new_result)
-        } else {
-            result_indices
-        };
-        
-        // Move pointers using constant-time comparisons to avoid timing leaks
-        let sum_less = sum.ct_lt(&target);
-        let sum_greater = sum.ct_gt(&target);
-        
-        // Update pointers in a way that doesn't leak timing information
-        if sum_less.into() {
-            left += 1;
-        }
-        if sum_greater.into() {
-            if right > 0 {
-                right -= 1;
-            }
-        }
-        
-        // Continue iteration to maintain constant timing
-        if !sum_less.into() && !sum_greater.into() {
-            // Found exact match, but continue to avoid timing leak
-            left += 1;
-            if right > 0 {
-                right -= 1;
+    // Check all pairs - this ensures constant timing regardless of where the match is
+    for i in 0..nums.len() {
+        for j in (i + 1)..nums.len() {
+            let sum = nums[i].wrapping_add(nums[j]);
+            let is_match = sum.ct_eq(&target);
+            
+            // Update result only if we found a match
+            if is_match.into() {
+                result = Some((i, j));
             }
         }
     }
     
-    result_indices
+    result
 }
 
 /// Securely compares two strings using a two-pointer approach
