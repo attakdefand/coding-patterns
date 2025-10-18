@@ -1,5 +1,6 @@
+//! Web server module for the two-pointer patterns explorer
+
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use warp::Filter;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -15,11 +16,36 @@ struct AlgorithmResponse {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
-struct PatternInfo {
-    name: String,
-    description: String,
-    category: String,
-    example: String,
+pub struct PatternInfo {
+    pub name: String,
+    pub description: String,
+    pub category: String,
+    pub example: String,
+}
+
+pub async fn start_server() {
+    // GET /patterns - Return information about all patterns
+    let patterns_route = warp::path("patterns")
+        .and(warp::get())
+        .map(|| warp::reply::json(&get_patterns_info()));
+
+    // POST /execute - Execute an algorithm
+    let execute_route = warp::path("execute")
+        .and(warp::post())
+        .and(warp::body::json())
+        .and_then(execute_algorithm);
+
+    // Serve static files
+    let static_files = warp::fs::dir("static");
+
+    // Combine routes
+    let routes = patterns_route
+        .or(execute_route)
+        .or(static_files)
+        .with(warp::cors().allow_any_origin());
+
+    println!("Server running on http://localhost:3030");
+    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
 }
 
 async fn execute_algorithm(req: AlgorithmRequest) -> Result<impl warp::Reply, warp::Rejection> {
@@ -227,9 +253,4 @@ fn get_patterns_info() -> Vec<PatternInfo> {
             example: "Array: [2,7,11,15], Target: 9 → Indices: (0,1)".to_string(),
         },
     ]
-}
-
-#[tokio::main]
-async fn main() {
-    web_server::start_server().await;
 }
