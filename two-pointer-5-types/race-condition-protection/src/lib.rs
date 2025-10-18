@@ -16,10 +16,15 @@
 pub mod concurrent_utils;
 pub mod race_protection;
 pub mod two_pointer;
+pub mod telemetry;
 
 // Re-export the main functions for easier access
 pub use race_protection::{ConcurrentTwoPointer, TwoPointerState};
 pub use two_pointer::{
     concurrent_array_search, concurrent_sorted_intersection, concurrent_string_compare,
     concurrent_two_sum,
+};
+pub use telemetry::{
+    get_telemetry_collector, record_operation, start_operation_timer, create_metrics, check_for_anomalies,
+    TwoPointerMetrics, TelemetryCollector, TelemetryStatistics
 };

@@ -1,6 +1,7 @@
 //! Race condition protection for two-pointer algorithms
 
 use crate::concurrent_utils::{AtomicCounter, ThreadSafeArray};
+use crate::telemetry::{start_operation_timer, create_metrics, record_operation};
 use parking_lot::Mutex;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Arc;
@@ -12,6 +13,8 @@ pub struct TwoPointerState {
     right: AtomicCounter,
     active: AtomicBool,
     operation_count: AtomicUsize,
+    pointer_crossings: AtomicUsize, // Track pointer crossings
+    loop_iterations: AtomicUsize,   // Track loop iterations
 }
 
 impl TwoPointerState {
@@ -23,6 +26,8 @@ impl TwoPointerState {
             right: AtomicCounter::new(0),
             active: AtomicBool::new(true),
             operation_count: AtomicUsize::new(0),
+            pointer_crossings: AtomicUsize::new(0),
+            loop_iterations: AtomicUsize::new(0),
         }
     }
 
@@ -53,6 +58,16 @@ impl TwoPointerState {
         self.right.decrement()
     }
 
+    /// Records a pointer crossing event
+    pub fn record_pointer_crossing(&self) {
+        self.pointer_crossings.fetch_add(1, Ordering::Relaxed);
+    }
+
+    /// Records a loop iteration
+    pub fn record_loop_iteration(&self) {
+        self.loop_iterations.fetch_add(1, Ordering::Relaxed);
+    }
+
     /// Gets values at both pointer positions
     pub fn get_values(&self) -> Option<(i32, i32)> {
         let left_idx = self.left.load();
@@ -66,7 +81,15 @@ impl TwoPointerState {
 
     /// Checks if the algorithm should continue running
     pub fn is_active(&self) -> bool {
-        self.active.load(Ordering::Relaxed) && self.left.load() < self.right.load()
+        let left = self.left.load();
+        let right = self.right.load();
+        
+        // Check for pointer crossing
+        if left >= right {
+            self.record_pointer_crossing();
+        }
+        
+        self.active.load(Ordering::Relaxed) && left < right
     }
 
     /// Deactivates the algorithm (stops execution)
@@ -79,12 +102,24 @@ impl TwoPointerState {
         self.operation_count.load(Ordering::Relaxed)
     }
 
+    /// Gets the number of pointer crossings
+    pub fn pointer_crossings(&self) -> usize {
+        self.pointer_crossings.load(Ordering::Relaxed)
+    }
+
+    /// Gets the number of loop iterations
+    pub fn loop_iterations(&self) -> usize {
+        self.loop_iterations.load(Ordering::Relaxed)
+    }
+
     /// Resets the state for a new operation
     pub fn reset(&self, data_len: usize) {
         self.left.store(0);
         self.right.store(data_len.saturating_sub(1));
         self.active.store(true, Ordering::Relaxed);
         self.operation_count.store(0, Ordering::Relaxed);
+        self.pointer_crossings.store(0, Ordering::Relaxed);
+        self.loop_iterations.store(0, Ordering::Relaxed);
     }
 }
 
@@ -110,6 +145,9 @@ impl ConcurrentTwoPointer {
 
     /// Executes the two-pointer algorithm to find a target sum
     pub fn find_sum(&self, target: i32) -> Option<(usize, usize)> {
+        let start_time = start_operation_timer();
+        let mut loop_iterations = 0;
+        
         // Reset state for new operation
         self.state.reset(self.state.data.len());
         self.found.store(false, Ordering::Relaxed);
@@ -120,6 +158,9 @@ impl ConcurrentTwoPointer {
 
         // Execute the two-pointer algorithm with race condition protection
         while self.state.is_active() && !self.found.load(Ordering::Relaxed) {
+            loop_iterations += 1;
+            self.state.record_loop_iteration();
+            
             // Get values at current pointer positions
             let values = match self.state.get_values() {
                 Some(vals) => vals,
@@ -127,7 +168,7 @@ impl ConcurrentTwoPointer {
             };
 
             let (left_val, right_val) = values;
-            let sum = left_val + right_val;
+            let sum = left_val.wrapping_add(right_val);
 
             if sum == target {
                 // Found the target sum
@@ -146,6 +187,15 @@ impl ConcurrentTwoPointer {
                 self.state.move_right();
             }
         }
+
+        // Record telemetry
+        let metrics = create_metrics(
+            start_time,
+            self.state.operation_count(),
+            self.state.pointer_crossings(),
+            loop_iterations,
+        );
+        record_operation(&metrics);
 
         // Return the result
         let result_guard = self.result.lock();
@@ -175,6 +225,16 @@ impl ConcurrentTwoPointer {
     pub fn operation_count(&self) -> usize {
         self.state.operation_count()
     }
+    
+    /// Gets the pointer crossings count
+    pub fn pointer_crossings(&self) -> usize {
+        self.state.pointer_crossings()
+    }
+    
+    /// Gets the loop iterations count
+    pub fn loop_iterations(&self) -> usize {
+        self.state.loop_iterations()
+    }
 }
 
 /// Thread-safe wrapper for string comparison
@@ -194,23 +254,59 @@ impl ConcurrentStringComparator {
 
     /// Compares the two strings concurrently
     pub fn compare(&self) -> bool {
+        let start_time = start_operation_timer();
+        let mut loop_iterations = 0;
+        
         let len1 = self.data1.len();
         let len2 = self.data2.len();
 
         // Early exit for different lengths
         if len1 != len2 {
+            let metrics = create_metrics(start_time, 1, 0, 1);
+            record_operation(&metrics);
             return false;
         }
 
-        // Compare each byte
-        for i in 0..len1 {
-            match (self.data1.get(i), self.data2.get(i)) {
-                (Some(b1), Some(b2)) if b1 == b2 => continue,
-                _ => return false,
+        // Use thread-safe array wrapper
+        let a_array = &self.data1;
+        let b_array = &self.data2;
+
+        let len = len1;
+        let mismatch_found = AtomicBool::new(false);
+
+        // Compare each byte concurrently
+        for i in 0..len {
+            loop_iterations += 1;
+            
+            if mismatch_found.load(Ordering::Relaxed) {
+                let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                record_operation(&metrics);
+                return false;
+            }
+
+            let a_byte = a_array.get(i);
+            let b_byte = b_array.get(i);
+
+            if let (Some(a_val), Some(b_val)) = (a_byte, b_byte) {
+                if a_val != b_val {
+                    mismatch_found.store(true, Ordering::Relaxed);
+                    let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                    record_operation(&metrics);
+                    return false;
+                }
+            } else {
+                // Handle case where array was modified during access
+                mismatch_found.store(true, Ordering::Relaxed);
+                let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                record_operation(&metrics);
+                return false;
             }
         }
 
-        true
+        let result = !mismatch_found.load(Ordering::Relaxed);
+        let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+        record_operation(&metrics);
+        result
     }
 }
 
