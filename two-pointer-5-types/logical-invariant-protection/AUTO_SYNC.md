@@ -46,7 +46,35 @@ This workflow automatically merges pull requests under certain conditions.
 
 If you want to set up auto-pull functionality on your local machine, here are several options:
 
-### Option 1: Using a Simple Shell Script
+We've included pre-built scripts in the [scripts](scripts/) directory:
+- [auto-pull.sh](scripts/auto-pull.sh) - Bash script for Linux/macOS
+- [auto-pull.bat](scripts/auto-pull.bat) - Batch script for Windows
+- [auto-pull.ps1](scripts/auto-pull.ps1) - PowerShell script for Windows
+
+### Option 1: Using Pre-built Scripts
+
+We've provided pre-built scripts for different platforms in the [scripts](scripts/) directory:
+
+**For Linux/macOS:**
+```bash
+# Make the script executable
+chmod +x scripts/auto-pull.sh
+
+# Run the script
+./scripts/auto-pull.sh
+```
+
+**For Windows (Command Prompt):**
+```batch
+scripts\auto-pull.bat
+```
+
+**For Windows (PowerShell):**
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\auto-pull.ps1
+```
+
+### Option 2: Using a Simple Shell Script
 
 Create a shell script that pulls changes periodically:
 
