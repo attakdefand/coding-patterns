@@ -2,7 +2,7 @@
 
 use crate::concurrent_utils::{AtomicCounter, ThreadSafeArray};
 use std::sync::Arc;
-use parking_lot::{Mutex, RwLock};
+use parking_lot::Mutex;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 
 /// Thread-safe state for two-pointer algorithms

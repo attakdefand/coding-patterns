@@ -1,6 +1,6 @@
 //! Utilities for concurrent programming and race condition protection
 
-use std::sync::atomic::{AtomicUsize, AtomicI32, Ordering};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
 use parking_lot::RwLock;
 use std::ops::Deref;

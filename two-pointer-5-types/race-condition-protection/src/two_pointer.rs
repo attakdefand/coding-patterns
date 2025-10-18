@@ -3,7 +3,7 @@
 use crate::race_protection::TwoPointerState;
 use crate::concurrent_utils::{AtomicCounter, ThreadSafeArray};
 use std::sync::Arc;
-use parking_lot::{RwLock, Mutex};
+use parking_lot::Mutex;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 /// Concurrently finds two numbers in a sorted array that sum to a target value
@@ -20,7 +20,6 @@ use std::sync::atomic::{AtomicBool, Ordering};
 /// # Returns
 /// * `Option<(usize, usize)>` - Indices of the two numbers that sum to target, or None
 pub fn concurrent_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
-    let state = TwoPointerState::new(nums.to_vec());
     let left = AtomicCounter::new(0);
     let right = AtomicCounter::new(nums.len().saturating_sub(1));
     let found = AtomicBool::new(false);
