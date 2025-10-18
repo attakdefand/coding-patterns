@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Pointer Coding Patterns</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .patterns-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .pattern-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .pattern-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .pattern-name {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .pattern-category {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .pattern-description {
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+
+        .pattern-complexity {
+            font-size: 0.9rem;
+            color: var(--warning-color);
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .security-considerations {
+            margin-top: 1rem;
+        }
+
+        .security-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .security-item {
+            display: block;
+            background-color: var(--light-color);
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--dark-color);
+            margin-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .patterns-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Two-Pointer Coding Patterns</h1>
+            <p class="subtitle">Explore 28 secure implementations with security considerations</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="patterns-container">
+            <!-- Pattern 1 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Container With Most Water</h3>
+                <span class="pattern-category">Array Problems</span>
+                <p class="pattern-description">Find two lines that together with the x-axis form a container that holds the most water.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Input validation for array length</span>
+                    <span class="security-item">Integer overflow protection for area calculation</span>
+                </div>
+            </div>
+
+            <!-- Pattern 2 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Merge Sorted Arrays</h3>
+                <span class="pattern-category">Array Problems</span>
+                <p class="pattern-description">Merge two sorted arrays into one sorted array.</p>
+                <p class="pattern-complexity">O(m+n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Bounds checking for array access</span>
+                    <span class="security-item">Memory safety for in-place modifications</span>
+                </div>
+            </div>
+
+            <!-- Pattern 3 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Remove Duplicates</h3>
+                <span class="pattern-category">Array Problems</span>
+                <p class="pattern-description">Remove duplicates from a sorted array in-place.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Index bounds validation</span>
+                    <span class="security-item">Prevent underflow in pointer arithmetic</span>
+                </div>
+            </div>
+
+            <!-- Pattern 4 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Bidirectional Merge Sorted Arrays</h3>
+                <span class="pattern-category">Bidirectional Merge</span>
+                <p class="pattern-description">Merge two sorted arrays from both ends toward the center.</p>
+                <p class="pattern-complexity">O(m+n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Concurrent access protection</span>
+                    <span class="security-item">Thread safety for shared data</span>
+                </div>
+            </div>
+
+            <!-- Pattern 5 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Intersection of Sorted Arrays</h3>
+                <span class="pattern-category">Bidirectional Merge</span>
+                <p class="pattern-description">Find common elements between two sorted arrays.</p>
+                <p class="pattern-complexity">O(m+n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Input validation for null arrays</span>
+                    <span class="security-item">Memory bounds checking</span>
+                </div>
+            </div>
+
+            <!-- Pattern 6 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Sorted Squares</h3>
+                <span class="pattern-category">Bidirectional Merge</span>
+                <p class="pattern-description">Square each element in a sorted array and return the result sorted.</p>
+                <p class="pattern-complexity">O(n) time, O(n) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Integer overflow protection for squaring</span>
+                    <span class="security-item">Memory allocation safety</span>
+                </div>
+            </div>
+
+            <!-- Pattern 7 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Union of Sorted Arrays</h3>
+                <span class="pattern-category">Bidirectional Merge</span>
+                <p class="pattern-description">Find all unique elements from two sorted arrays.</p>
+                <p class="pattern-complexity">O(m+n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Duplicate element handling</span>
+                    <span class="security-item">Memory access bounds</span>
+                </div>
+            </div>
+
+            <!-- Pattern 8 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Is Palindrome</h3>
+                <span class="pattern-category">Opposite Ends</span>
+                <p class="pattern-description">Check if a string is a palindrome using two pointers from opposite ends.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Unicode character handling</span>
+                    <span class="security-item">String bounds validation</span>
+                </div>
+            </div>
+
+            <!-- Pattern 9 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Reverse Array</h3>
+                <span class="pattern-category">Opposite Ends</span>
+                <p class="pattern-description">Reverse an array in-place using two pointers from opposite ends.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">In-place modification safety</span>
+                    <span class="security-item">Index bounds checking</span>
+                </div>
+            </div>
+
+            <!-- Pattern 10 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Three Sum</h3>
+                <span class="pattern-category">Opposite Ends</span>
+                <p class="pattern-description">Find all unique triplets that sum to zero.</p>
+                <p class="pattern-complexity">O(n²) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Duplicate triplet prevention</span>
+                    <span class="security-item">Integer overflow protection</span>
+                </div>
+            </div>
+
+            <!-- Pattern 11 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Two Sum (Sorted Array)</h3>
+                <span class="pattern-category">Opposite Ends</span>
+                <p class="pattern-description">Find two numbers that add up to a target in a sorted array.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Target validation</span>
+                    <span class="security-item">Index bounds checking</span>
+                </div>
+            </div>
+
+            <!-- Pattern 12 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Partition Even/Odd</h3>
+                <span class="pattern-category">Partitioning</span>
+                <p class="pattern-description">Partition an array so even numbers come before odd numbers.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Element validation</span>
+                    <span class="security-item">Memory safety for swaps</span>
+                </div>
+            </div>
+
+            <!-- Pattern 13 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Remove Duplicates (Sorted)</h3>
+                <span class="pattern-category">Partitioning</span>
+                <p class="pattern-description">Remove duplicates from a sorted array using partitioning technique.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Index bounds validation</span>
+                    <span class="security-item">Underflow protection</span>
+                </div>
+            </div>
+
+            <!-- Pattern 14 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Remove Element</h3>
+                <span class="pattern-category">Partitioning</span>
+                <p class="pattern-description">Remove all instances of a value from an array in-place.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Value validation</span>
+                    <span class="security-item">Memory access bounds</span>
+                </div>
+            </div>
+
+            <!-- Pattern 15 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Sort Colors</h3>
+                <span class="pattern-category">Partitioning</span>
+                <p class="pattern-description">Sort an array of colors (represented by 0, 1, 2) in-place.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Color value validation</span>
+                    <span class="security-item">Index bounds checking</span>
+                </div>
+            </div>
+
+            <!-- Pattern 16 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Find Middle Element</h3>
+                <span class="pattern-category">Same Direction</span>
+                <p class="pattern-description">Find the middle element of a linked list using slow and fast pointers.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Null pointer checks</span>
+                    <span class="security-item">Cycle detection</span>
+                </div>
+            </div>
+
+            <!-- Pattern 17 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Detect Cycle</h3>
+                <span class="pattern-category">Same Direction</span>
+                <p class="pattern-description">Detect if a linked list has a cycle using Floyd's cycle detection algorithm.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Memory safety for node traversal</span>
+                    <span class="security-item">Infinite loop prevention</span>
+                </div>
+            </div>
+
+            <!-- Pattern 18 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Kth Element from End</h3>
+                <span class="pattern-category">Same Direction</span>
+                <p class="pattern-description">Find the kth element from the end of a linked list.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">K value validation</span>
+                    <span class="security-item">List bounds checking</span>
+                </div>
+            </div>
+
+            <!-- Pattern 19 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Find Pair with Product</h3>
+                <span class="pattern-category">Sliding Window</span>
+                <p class="pattern-description">Find a pair of elements in a sorted array whose product equals a target.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Zero division protection</span>
+                    <span class="security-item">Integer overflow checking</span>
+                </div>
+            </div>
+
+            <!-- Pattern 20 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Find Triplet Sum</h3>
+                <span class="pattern-category">Sum Problems</span>
+                <p class="pattern-description">Find three elements in an array that sum to a target value.</p>
+                <p class="pattern-complexity">O(n²) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Target validation</span>
+                    <span class="security-item">Integer overflow protection</span>
+                </div>
+            </div>
+
+            <!-- Pattern 21 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Two Sum (Sorted)</h3>
+                <span class="pattern-category">Sum Problems</span>
+                <p class="pattern-description">Find two elements in a sorted array that sum to a target.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Target validation</span>
+                    <span class="security-item">Index bounds checking</span>
+                </div>
+            </div>
+
+            <!-- Pattern 22 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Two Sum (Sorted) - Safe</h3>
+                <span class="pattern-category">Sum Problems</span>
+                <p class="pattern-description">Secure implementation of two sum with additional safety checks.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Timing attack prevention</span>
+                    <span class="security-item">Constant-time comparison for secrets</span>
+                </div>
+            </div>
+
+            <!-- Pattern 23 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Longest Subarray with K Distinct</h3>
+                <span class="pattern-category">Window Bounds</span>
+                <p class="pattern-description">Find the longest subarray with at most K distinct elements.</p>
+                <p class="pattern-complexity">O(n) time, O(K) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Memory allocation limits</span>
+                    <span class="security-item">K value validation</span>
+                </div>
+            </div>
+
+            <!-- Pattern 24 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Longest Substring Without Repeating</h3>
+                <span class="pattern-category">Window Bounds</span>
+                <p class="pattern-description">Find the length of the longest substring without repeating characters.</p>
+                <p class="pattern-complexity">O(n) time, O(min(m,n)) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Character set validation</span>
+                    <span class="security-item">Memory bounds checking</span>
+                </div>
+            </div>
+
+            <!-- Pattern 25 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Maximum Sum Subarray</h3>
+                <span class="pattern-category">Window Bounds</span>
+                <p class="pattern-description">Find the maximum sum of any contiguous subarray (Kadane's algorithm).</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Integer overflow protection</span>
+                    <span class="security-item">Empty array handling</span>
+                </div>
+            </div>
+
+            <!-- Pattern 26 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Minimum Window Substring</h3>
+                <span class="pattern-category">Window Bounds</span>
+                <p class="pattern-description">Find the minimum window substring that contains all characters of another string.</p>
+                <p class="pattern-complexity">O(n) time, O(m) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Pattern validation</span>
+                    <span class="security-item">Memory allocation safety</span>
+                </div>
+            </div>
+
+            <!-- Pattern 27 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Sliding Window Maximum</h3>
+                <span class="pattern-category">Sliding Window</span>
+                <p class="pattern-description">Find the maximum element in each sliding window of size k.</p>
+                <p class="pattern-complexity">O(n) time, O(k) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Window size validation</span>
+                    <span class="security-item">Deque bounds checking</span>
+                </div>
+            </div>
+
+            <!-- Pattern 28 -->
+            <div class="pattern-card">
+                <h3 class="pattern-name">Trapping Rain Water</h3>
+                <span class="pattern-category">Two Pointer Variants</span>
+                <p class="pattern-description">Compute how much water can be trapped after raining given an elevation map.</p>
+                <p class="pattern-complexity">O(n) time, O(1) space</p>
+                <div class="security-considerations">
+                    <div class="security-title">Security Considerations:</div>
+                    <span class="security-item">Elevation value validation</span>
+                    <span class="security-item">Integer overflow protection</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Two-Pointer Coding Patterns &copy; 2025 | Secure Algorithm Implementations</p>
+        </div>
+    </footer>
+</body>
+</html>
