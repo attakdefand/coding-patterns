@@ -4,7 +4,6 @@
 //! Defenses: Use constant-time compare routines
 
 use race_condition_protection::{
-    concurrent_string_compare,
     race_protection::ConcurrentStringComparator,
 };
 use std::time::{Duration, Instant};
@@ -22,7 +21,7 @@ fn vulnerable_string_compare(a: &str, b: &str) -> bool {
     }
     
     // Early exit on first mismatch leaks content information
-    for (i, (a_char, b_char)) in a.chars().zip(b.chars()).enumerate() {
+    for (_i, (a_char, b_char)) in a.chars().zip(b.chars()).enumerate() {
         if a_char != b_char {
             return false; // Early exit leaks position and value information
         }

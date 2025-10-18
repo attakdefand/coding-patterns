@@ -1,17 +1,14 @@
 //! Test for memory exhaustion attack and defenses
 //!
-//! Attack: Send many large arrays to force worst-case auxiliary memory growth
+//! Attack: Send many large arrays crafted to force the algorithm into worst-case auxiliary memory growth
 //! Defenses: Cap distinct keys tracked, evict old keys, throttle requests, 
 //!          reject oversized inputs, monitor memory/growth
 
 use race_condition_protection::{
-    concurrent_two_sum, concurrent_sorted_intersection,
-    protection::{ProtectionConfig, ProtectionManager, get_protection_manager},
+    concurrent_two_sum,
+    protection::{ProtectionConfig, ProtectionManager},
 };
 use std::collections::HashMap;
-use std::sync::Arc;
-use std::thread;
-use std::time::Duration;
 
 /// Simulate a vulnerable sliding window implementation that tracks all distinct elements
 #[allow(dead_code)]
