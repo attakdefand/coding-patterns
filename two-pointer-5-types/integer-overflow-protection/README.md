@@ -114,6 +114,12 @@ To run the tests:
 cargo test
 ```
 
+## Additional Documentation
+
+- [Security Analysis](SECURITY_ANALYSIS.md) - Detailed security analysis of protection mechanisms
+- [Summary](SUMMARY.md) - Implementation summary
+- [Attack Scenarios](ATTACK_SCENARIOS.md) - Specific attack scenarios and protection mechanisms
+
 ## Key Security Features
 
 1. **Checked Arithmetic**: All arithmetic operations use checked variants
