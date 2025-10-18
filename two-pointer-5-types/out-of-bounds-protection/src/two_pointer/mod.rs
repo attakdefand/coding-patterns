@@ -6,9 +6,4 @@
 pub mod opposite_ends;
 
 // Re-export the main functions
-pub use opposite_ends::{
-    two_sum_sorted,
-    is_palindrome,
-    reverse_array,
-    three_sum,
-};
+pub use opposite_ends::{is_palindrome, reverse_array, three_sum, two_sum_sorted};

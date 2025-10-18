@@ -1,9 +1,9 @@
 //! Race condition protection for two-pointer algorithms
 
 use crate::concurrent_utils::{AtomicCounter, ThreadSafeArray};
-use std::sync::Arc;
 use parking_lot::Mutex;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+use std::sync::Arc;
 
 /// Thread-safe state for two-pointer algorithms
 pub struct TwoPointerState {
@@ -57,17 +57,16 @@ impl TwoPointerState {
     pub fn get_values(&self) -> Option<(i32, i32)> {
         let left_idx = self.left.load();
         let right_idx = self.right.load();
-        
+
         let left_val = self.data.get(left_idx)?;
         let right_val = self.data.get(right_idx)?;
-        
+
         Some((left_val, right_val))
     }
 
     /// Checks if the algorithm should continue running
     pub fn is_active(&self) -> bool {
-        self.active.load(Ordering::Relaxed) && 
-        self.left.load() < self.right.load()
+        self.active.load(Ordering::Relaxed) && self.left.load() < self.right.load()
     }
 
     /// Deactivates the algorithm (stops execution)
@@ -101,7 +100,7 @@ impl ConcurrentTwoPointer {
     pub fn new(data: Vec<i32>) -> Self {
         let state = Arc::new(TwoPointerState::new(data));
         state.init_right_pointer(state.data.len());
-        
+
         Self {
             state,
             result: Arc::new(Mutex::new(None)),
@@ -118,7 +117,7 @@ impl ConcurrentTwoPointer {
             let mut result_guard = self.result.lock();
             *result_guard = None;
         }
-        
+
         // Execute the two-pointer algorithm with race condition protection
         while self.state.is_active() && !self.found.load(Ordering::Relaxed) {
             // Get values at current pointer positions
@@ -126,15 +125,15 @@ impl ConcurrentTwoPointer {
                 Some(vals) => vals,
                 None => break, // Invalid state, possibly due to concurrent modification
             };
-            
+
             let (left_val, right_val) = values;
             let sum = left_val + right_val;
-            
+
             if sum == target {
                 // Found the target sum
                 let left_idx = self.state.left();
                 let right_idx = self.state.right();
-                
+
                 // Use atomic flag to prevent multiple threads from setting result
                 if !self.found.swap(true, Ordering::Relaxed) {
                     let mut result_guard = self.result.lock();
@@ -147,7 +146,7 @@ impl ConcurrentTwoPointer {
                 self.state.move_right();
             }
         }
-        
+
         // Return the result
         let result_guard = self.result.lock();
         *result_guard
@@ -157,10 +156,10 @@ impl ConcurrentTwoPointer {
     pub fn update_data(&self, new_data: Vec<i32>) {
         // Deactivate current operation
         self.state.deactivate();
-        
+
         // Wait a bit for operations to finish
         std::thread::sleep(std::time::Duration::from_micros(100));
-        
+
         // Update the data
         // Note: In a real implementation, we'd need a more sophisticated approach
         // This is a simplified version for demonstration
@@ -197,12 +196,12 @@ impl ConcurrentStringComparator {
     pub fn compare(&self) -> bool {
         let len1 = self.data1.len();
         let len2 = self.data2.len();
-        
+
         // Early exit for different lengths
         if len1 != len2 {
             return false;
         }
-        
+
         // Compare each byte
         for i in 0..len1 {
             match (self.data1.get(i), self.data2.get(i)) {
@@ -210,7 +209,7 @@ impl ConcurrentStringComparator {
                 _ => return false,
             }
         }
-        
+
         true
     }
 }
@@ -218,25 +217,25 @@ impl ConcurrentStringComparator {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::thread;
     use std::sync::Arc;
+    use std::thread;
 
     #[test]
     fn test_two_pointer_state() {
         let data = vec![1, 2, 3, 4, 5];
         let state = TwoPointerState::new(data);
         state.init_right_pointer(5);
-        
+
         assert_eq!(state.left(), 0);
         assert_eq!(state.right(), 4);
         assert!(state.is_active());
-        
+
         state.move_left();
         assert_eq!(state.left(), 1);
-        
+
         state.move_right();
         assert_eq!(state.right(), 3);
-        
+
         assert_eq!(state.operation_count(), 2);
     }
 
@@ -244,10 +243,10 @@ mod tests {
     fn test_concurrent_two_pointer() {
         let data = vec![2, 7, 11, 15];
         let algo = ConcurrentTwoPointer::new(data);
-        
+
         let result = algo.find_sum(9);
         assert_eq!(result, Some((0, 1)));
-        
+
         let result = algo.find_sum(18);
         assert_eq!(result, Some((1, 2)));
     }
@@ -256,7 +255,7 @@ mod tests {
     fn test_concurrent_string_comparator() {
         let comparator = ConcurrentStringComparator::new("hello", "hello");
         assert!(comparator.compare());
-        
+
         let comparator = ConcurrentStringComparator::new("hello", "world");
         assert!(!comparator.compare());
     }
@@ -266,18 +265,16 @@ mod tests {
         let data = vec![2, 7, 11, 15];
         let algo = Arc::new(ConcurrentTwoPointer::new(data));
         let target = 9;
-        
+
         let handles: Vec<_> = (0..5)
             .map(|_| {
                 let algo_clone = Arc::clone(&algo);
-                thread::spawn(move || {
-                    algo_clone.find_sum(target)
-                })
+                thread::spawn(move || algo_clone.find_sum(target))
             })
             .collect();
-        
+
         let results: Vec<_> = handles.into_iter().map(|h| h.join().unwrap()).collect();
-        
+
         // All threads should get the same result
         for result in results {
             assert_eq!(result, Some((0, 1)));
@@ -288,10 +285,10 @@ mod tests {
     fn test_operation_count() {
         let data = vec![1, 2, 3, 4, 5];
         let algo = ConcurrentTwoPointer::new(data);
-        
+
         // This should take 2 operations: move left twice to find 1+4=5
         let _result = algo.find_sum(5);
-        
+
         // Should have performed some operations
         assert!(algo.operation_count() > 0);
     }

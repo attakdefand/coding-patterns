@@ -7,8 +7,5 @@ pub mod two_pointer;
 
 // Re-export the main functions for easier access
 pub use two_pointer::{
-    two_sum_safe,
-    three_sum_safe,
-    container_with_most_water_safe,
-    find_subarray_sum_safe,
+    container_with_most_water_safe, find_subarray_sum_safe, three_sum_safe, two_sum_safe,
 };

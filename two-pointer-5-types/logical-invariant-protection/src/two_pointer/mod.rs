@@ -7,9 +7,5 @@ pub mod opposite_ends;
 pub mod window_bounds;
 
 // Re-export the main functions
-pub use opposite_ends::{
-    two_sum_sorted,
-    is_palindrome,
-    three_sum,
-};
+pub use opposite_ends::{is_palindrome, three_sum, two_sum_sorted};
 pub use window_bounds::container_with_most_water;

@@ -20,30 +20,30 @@ impl ListNode {
 }
 
 /// Finds the middle node of a linked list with infinite loop protection
-/// 
+///
 /// # Security Measures Against Infinite Loops
 /// 1. Time-based loop termination to prevent algorithmic DoS
 /// 2. Iteration count limiting to prevent unbounded execution
 /// 3. Cycle detection to prevent infinite traversal
 /// 4. Input validation to prevent complexity attacks
-/// 
+///
 /// # Arguments
 /// * `head` - The head of the linked list
-/// 
+///
 /// # Returns
 /// * `Option<&ListNode>` - Reference to the middle node, or None if list is empty
-/// 
+///
 /// # Examples
 /// ```
 /// use infinite_loop_protection::two_pointer::same_direction::{ListNode, find_middle};
-/// 
+///
 /// let mut node1 = ListNode::new(1);
 /// let mut node2 = ListNode::new(2);
 /// let node3 = ListNode::new(3);
-/// 
+///
 /// node2.next = Some(Box::new(node3));
 /// node1.next = Some(Box::new(node2));
-/// 
+///
 /// let middle = find_middle(&Some(Box::new(node1)));
 /// assert_eq!(middle.unwrap().val, 2);
 /// ```
@@ -56,7 +56,7 @@ pub fn find_middle(head: &Option<Box<ListNode>>) -> Option<&ListNode> {
     // 1. Time limit (100ms should be more than enough for any reasonable input)
     let start_time = Instant::now();
     let time_limit = Duration::from_millis(100);
-    
+
     // 2. Iteration limit (prevent unbounded traversal)
     // For a list of n nodes, fast pointer should reach end in at most n/2 steps
     let max_iterations = 100000; // Reasonable limit for most applications
@@ -72,7 +72,7 @@ pub fn find_middle(head: &Option<Box<ListNode>>) -> Option<&ListNode> {
             // Log or handle timeout as needed
             return None; // Timeout - potential DoS attack or extremely slow execution
         }
-        
+
         // Check iteration limit to prevent unbounded execution
         iteration_count += 1;
         if iteration_count > max_iterations {
@@ -82,7 +82,7 @@ pub fn find_middle(head: &Option<Box<ListNode>>) -> Option<&ListNode> {
 
         // Move slow pointer one step
         slow = slow.and_then(|n| n.next.as_ref());
-        
+
         // Move fast pointer two steps
         fast = fast_node.next.as_ref();
         if let Some(fast_node_next) = fast {
@@ -108,7 +108,7 @@ mod tests {
         let middle = find_middle(&binding);
         assert!(middle.is_some());
         assert_eq!(middle.unwrap().val, 1);
-        
+
         // Simplified test - just verify it doesn't panic
         // Complex multi-node tests are covered by edge case tests
     }

@@ -4,10 +4,7 @@
 //! and verify that the implementations defend against them properly.
 
 use logical_invariant_protection::{
-    two_sum_sorted,
-    is_palindrome,
-    three_sum,
-    container_with_most_water,
+    container_with_most_water, is_palindrome, three_sum, two_sum_sorted,
 };
 
 #[cfg(test)]
@@ -20,7 +17,7 @@ mod tests {
         // The algorithm should still work correctly
         let nums = vec![100, 1, 50, 2, 75, 3];
         let target = 5;
-        
+
         let result = two_sum_sorted(&nums, target);
         // Should find 2 + 3 = 5
         assert!(result.is_some());
@@ -35,7 +32,7 @@ mod tests {
         // The algorithm should still work correctly
         let nums = vec![10, -10, 5, -5, 0, 1, -1];
         let target = 0;
-        
+
         let result = three_sum(&nums, target);
         assert!(result.is_some());
         if let Some((i, j, k)) = result {
@@ -49,7 +46,7 @@ mod tests {
         // The algorithm should handle them safely
         let s = "A man, a plan, a canal: Panama!@#$%^&*()_+{}|:<>?"; // Mix of ASCII and special chars
         assert_eq!(is_palindrome(s), true);
-        
+
         let s = "上海海上🌊🌊"; // Mix of Chinese characters and emojis
         assert_eq!(is_palindrome(s), true);
     }
@@ -69,7 +66,7 @@ mod tests {
         // Test edge case with many duplicate values that might confuse the algorithm
         let nums = vec![1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2];
         let target = 3;
-        
+
         let result = two_sum_sorted(&nums, target);
         assert!(result.is_some());
         if let Some((i, j)) = result {
@@ -82,7 +79,7 @@ mod tests {
         // Test edge case with all same values
         let nums = vec![0, 0, 0, 0, 0, 0];
         let target = 0;
-        
+
         let result = three_sum(&nums, target);
         assert!(result.is_some());
         if let Some((i, j, k)) = result {
@@ -95,7 +92,7 @@ mod tests {
         // Test with extreme values that might cause overflow
         let nums = vec![i32::MIN, -1000000, 0, 1000000, i32::MAX];
         let target = i32::MAX + i32::MIN; // This would overflow in normal addition
-        
+
         let result = two_sum_sorted(&nums, target);
         // Should handle overflow gracefully
         if let Some((i, j)) = result {

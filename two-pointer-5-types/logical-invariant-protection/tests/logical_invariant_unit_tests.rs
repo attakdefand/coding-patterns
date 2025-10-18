@@ -4,10 +4,7 @@
 //! logical invariants are broken by untrusted input.
 
 use logical_invariant_protection::{
-    two_sum_sorted,
-    is_palindrome,
-    three_sum,
-    container_with_most_water,
+    container_with_most_water, is_palindrome, three_sum, two_sum_sorted,
 };
 
 #[cfg(test)]

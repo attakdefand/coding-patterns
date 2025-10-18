@@ -6,32 +6,33 @@
 use std::time::{Duration, Instant};
 
 /// Finds two numbers in a sorted array that sum to a target value with infinite loop protection
-/// 
+///
 /// # Security Measures Against Infinite Loops
 /// 1. Time-based loop termination to prevent algorithmic DoS
 /// 2. Iteration count limiting to prevent unbounded execution
 /// 3. Proper pointer advancement validation
 /// 4. Input size validation to prevent complexity attacks
-/// 
+///
 /// # Arguments
 /// * `nums` - A sorted slice of integers
 /// * `target` - The target sum to find
-/// 
+///
 /// # Returns
 /// * `Some((i, j))` - Indices of the two numbers that sum to target
 /// * `None` - If no such pair exists or if input is invalid
-/// 
+///
 /// # Examples
 /// ```
 /// use infinite_loop_protection::two_pointer::opposite_ends::two_sum_sorted;
-/// 
+///
 /// let nums = vec![2, 7, 11, 15];
 /// let result = two_sum_sorted(&nums, 9);
 /// assert_eq!(result, Some((0, 1)));
 /// ```
 pub fn two_sum_sorted(nums: &[i32], target: i32) -> Option<(usize, usize)> {
     // Input validation - prevent complexity attacks with large inputs
-    if nums.len() > 1000000 { // Limit to 1 million elements
+    if nums.len() > 1000000 {
+        // Limit to 1 million elements
         return None;
     }
 
@@ -48,7 +49,7 @@ pub fn two_sum_sorted(nums: &[i32], target: i32) -> Option<(usize, usize)> {
     // 1. Time limit (100ms should be more than enough for any reasonable input)
     let start_time = Instant::now();
     let time_limit = Duration::from_millis(100);
-    
+
     // 2. Iteration limit (worst case is n/2 iterations)
     let max_iterations = nums.len() / 2 + 1;
     let mut iteration_count = 0;
@@ -60,7 +61,7 @@ pub fn two_sum_sorted(nums: &[i32], target: i32) -> Option<(usize, usize)> {
             // Log or handle timeout as needed
             return None; // Timeout - potential DoS attack or extremely slow execution
         }
-        
+
         // Check iteration limit to prevent unbounded execution
         iteration_count += 1;
         if iteration_count > max_iterations {
@@ -79,7 +80,7 @@ pub fn two_sum_sorted(nums: &[i32], target: i32) -> Option<(usize, usize)> {
                         if left >= nums.len() {
                             return None;
                         }
-                    },
+                    }
                     std::cmp::Ordering::Greater => {
                         // Safe decrement with underflow protection
                         if right == 0 {
@@ -120,7 +121,7 @@ mod tests {
         let nums = vec![2, 7, 11, 15];
         let result = two_sum_sorted(&nums, 9);
         assert_eq!(result, Some((0, 1)));
-        
+
         let nums = vec![2, 3, 4];
         let result = two_sum_sorted(&nums, 6);
         assert_eq!(result, Some((0, 2)));
@@ -132,17 +133,17 @@ mod tests {
         let nums = vec![];
         let result = two_sum_sorted(&nums, 0);
         assert_eq!(result, None);
-        
+
         // Single element
         let nums = vec![1];
         let result = two_sum_sorted(&nums, 1);
         assert_eq!(result, None);
-        
+
         // Two elements
         let nums = vec![1, 2];
         let result = two_sum_sorted(&nums, 3);
         assert_eq!(result, Some((0, 1)));
-        
+
         // No valid pair
         let nums = vec![1, 2, 3, 4, 5];
         let result = two_sum_sorted(&nums, 10);
@@ -156,7 +157,7 @@ mod tests {
         let result = two_sum_sorted(&nums, 999999);
         // Should work fine (finds 0 + 999999)
         assert_eq!(result, Some((0, 999999)));
-        
+
         // Test with input that exceeds the limit
         let nums: Vec<i32> = (0..1000001).collect();
         let result = two_sum_sorted(&nums, 1000000);

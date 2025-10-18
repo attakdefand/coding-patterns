@@ -6,9 +6,4 @@
 pub mod two_pointer;
 
 // Re-export the main functions for easier access
-pub use two_pointer::{
-    two_sum_sorted,
-    is_palindrome,
-    three_sum,
-    container_with_most_water,
-};
+pub use two_pointer::{container_with_most_water, is_palindrome, three_sum, two_sum_sorted};

@@ -7,9 +7,5 @@ pub mod opposite_ends;
 pub mod window_bounds;
 
 // Re-export the main functions
-pub use opposite_ends::{
-    two_sum_safe,
-    three_sum_safe,
-    find_subarray_sum_safe,
-};
+pub use opposite_ends::{find_subarray_sum_safe, three_sum_safe, two_sum_safe};
 pub use window_bounds::container_with_most_water_safe;

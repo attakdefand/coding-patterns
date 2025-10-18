@@ -11,13 +11,10 @@
 //! 3. Ensuring consistent iteration counts regardless of input
 //! 4. Using dummy operations to mask actual computation
 
-pub mod two_pointer;
 pub mod timing_utils;
+pub mod two_pointer;
 
 // Re-export the main functions for easier access
 pub use two_pointer::{
-    secure_two_sum,
-    secure_string_compare,
-    secure_array_search,
-    secure_sorted_intersection,
+    secure_array_search, secure_sorted_intersection, secure_string_compare, secure_two_sum,
 };

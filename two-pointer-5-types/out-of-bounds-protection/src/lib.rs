@@ -6,9 +6,4 @@
 pub mod two_pointer;
 
 // Re-export the main functions for easier access
-pub use two_pointer::{
-    two_sum_sorted,
-    is_palindrome,
-    reverse_array,
-    three_sum,
-};
+pub use two_pointer::{is_palindrome, reverse_array, three_sum, two_sum_sorted};

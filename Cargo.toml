@@ -1,0 +1,19 @@
+[workspace]
+members = [
+    "two-pointer-project",
+    "two-pointer-5-types/integer-overflow-protection",
+    "two-pointer-5-types/logical-invariant-protection",
+    "two-pointer-5-types/out-of-bounds-protection",
+    "two-pointer-5-types/infinite-loop-protection",
+    "two-pointer-5-types/race-condition-protection",
+    "two-pointer-5-types/timing-sidechannel-protection",
+]
+
+[package]
+name = "patterns-attack-defense"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# This is a virtual manifest for the workspace
+# Individual crates are defined in their respective directories

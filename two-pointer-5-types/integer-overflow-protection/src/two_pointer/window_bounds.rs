@@ -4,23 +4,23 @@
 //! and underflow when computing indices, sums, or sizes in two-pointer algorithms.
 
 /// Finds the maximum area of water that can be stored between two lines with integer overflow protection
-/// 
+///
 /// # Security Measures Against Integer Overflow/Underflow
 /// 1. Uses checked arithmetic operations for area calculations
 /// 2. Validates array indices before access
 /// 3. Handles extreme value cases safely
 /// 4. Provides fallback mechanisms for edge cases
-/// 
+///
 /// # Arguments
 /// * `height` - A slice of integers representing heights of vertical lines
-/// 
+///
 /// # Returns
 /// * `i32` - Maximum area of water that can be stored
-/// 
+///
 /// # Examples
 /// ```
 /// use integer_overflow_protection::two_pointer::window_bounds::container_with_most_water_safe;
-/// 
+///
 /// let height = vec![1, 8, 6, 2, 5, 4, 8, 3, 7];
 /// let result = container_with_most_water_safe(&height);
 /// assert_eq!(result, 49);
@@ -30,22 +30,22 @@ pub fn container_with_most_water_safe(height: &[i32]) -> i32 {
     if height.len() < 2 {
         return 0;
     }
-    
+
     let mut left = 0;
     let mut right = height.len() - 1;
     let mut max_area: i64 = 0; // Use larger type to prevent overflow
-    
+
     // Main loop with proper termination conditions
     while left < right {
         // Double-check bounds before accessing array elements
         if left >= height.len() || right >= height.len() {
             break;
         }
-        
+
         // Get heights with bounds checking
         let left_height = height[left];
         let right_height = height[right];
-        
+
         // Calculate width safely using checked arithmetic
         let width = match (right as i64).checked_sub(left as i64) {
             Some(w) => w,
@@ -54,10 +54,10 @@ pub fn container_with_most_water_safe(height: &[i32]) -> i32 {
                 break;
             }
         };
-        
+
         // Calculate height as minimum of two lines
         let current_height = std::cmp::min(left_height, right_height) as i64;
-        
+
         // Calculate area safely with overflow protection
         let current_area = match width.checked_mul(current_height) {
             Some(area) => area,
@@ -66,10 +66,10 @@ pub fn container_with_most_water_safe(height: &[i32]) -> i32 {
                 i64::MAX
             }
         };
-        
+
         // Update maximum area
         max_area = std::cmp::max(max_area, current_area);
-        
+
         // Move the pointer pointing to the shorter line
         if left_height <= right_height {
             left += 1;
@@ -80,7 +80,7 @@ pub fn container_with_most_water_safe(height: &[i32]) -> i32 {
             right -= 1;
         }
     }
-    
+
     // Convert back to i32, saturating if necessary
     max_area.min(i32::MAX as i64) as i32
 }
@@ -94,7 +94,7 @@ mod tests {
         let height = vec![1, 8, 6, 2, 5, 4, 8, 3, 7];
         let result = container_with_most_water_safe(&height);
         assert_eq!(result, 49);
-        
+
         let height = vec![1, 1];
         let result = container_with_most_water_safe(&height);
         assert_eq!(result, 1);
@@ -106,12 +106,12 @@ mod tests {
         let height = vec![];
         let result = container_with_most_water_safe(&height);
         assert_eq!(result, 0);
-        
+
         // Single element
         let height = vec![1];
         let result = container_with_most_water_safe(&height);
         assert_eq!(result, 0);
-        
+
         // Two elements
         let height = vec![1, 2];
         let result = container_with_most_water_safe(&height);

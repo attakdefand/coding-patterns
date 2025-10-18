@@ -1,9 +1,9 @@
 //! Utilities for concurrent programming and race condition protection
 
-use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::Arc;
 use parking_lot::RwLock;
 use std::ops::Deref;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Arc;
 
 /// Thread-safe counter for atomic increment/decrement operations
 pub struct AtomicCounter {
@@ -57,7 +57,7 @@ impl<T: Clone> ThreadSafeArray<T> {
     pub fn get(&self, index: usize) -> Option<T> {
         // Use read lock for safe access
         let guard = self.data.read();
-        
+
         // Validate index is still in bounds (TOCTOU protection)
         if index < guard.len() {
             Some(guard[index].clone())
@@ -70,7 +70,7 @@ impl<T: Clone> ThreadSafeArray<T> {
     pub fn set(&self, index: usize, value: T) -> bool {
         // Use write lock for modification
         let mut guard = self.data.write();
-        
+
         // Validate index is still in bounds
         if index < guard.len() {
             guard[index] = value;
@@ -121,7 +121,7 @@ impl<T: Clone> SharedState<T> {
     }
 
     /// Applies a function to the current value and updates it
-    pub fn update<F>(&self, f: F) 
+    pub fn update<F>(&self, f: F)
     where
         F: FnOnce(T) -> T,
     {
@@ -170,17 +170,17 @@ impl AtomicFlag {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::thread;
     use std::sync::Arc;
+    use std::thread;
 
     #[test]
     fn test_atomic_counter() {
         let counter = AtomicCounter::new(0);
         assert_eq!(counter.load(), 0);
-        
+
         assert_eq!(counter.increment(), 1);
         assert_eq!(counter.load(), 1);
-        
+
         assert_eq!(counter.decrement(), 0);
         assert_eq!(counter.load(), 0);
     }
@@ -190,13 +190,13 @@ mod tests {
         let array = ThreadSafeArray::new(vec![1, 2, 3, 4, 5]);
         assert_eq!(array.len(), 5);
         assert!(!array.is_empty());
-        
+
         assert_eq!(array.get(2), Some(3));
         assert_eq!(array.get(10), None); // Out of bounds
-        
+
         assert!(array.set(1, 10));
         assert_eq!(array.get(1), Some(10));
-        
+
         assert!(!array.set(10, 20)); // Out of bounds
     }
 
@@ -204,9 +204,9 @@ mod tests {
     fn test_concurrent_access() {
         let array = Arc::new(ThreadSafeArray::new(vec![1, 2, 3, 4, 5]));
         let counter = Arc::new(AtomicCounter::new(0));
-        
+
         let mut handles = vec![];
-        
+
         // Spawn multiple threads to access the array concurrently
         for _ in 0..10 {
             let array_clone = Arc::clone(&array);
@@ -217,10 +217,10 @@ mod tests {
             });
             handles.push(handle);
         }
-        
+
         // Collect results
         let results: Vec<_> = handles.into_iter().map(|h| h.join().unwrap()).collect();
-        
+
         // All accesses should be successful (no panics due to race conditions)
         assert_eq!(results.len(), 10);
     }
@@ -229,10 +229,10 @@ mod tests {
     fn test_shared_state() {
         let state = SharedState::new(42);
         assert_eq!(state.get(), 42);
-        
+
         state.set(100);
         assert_eq!(state.get(), 100);
-        
+
         state.update(|x| x * 2);
         assert_eq!(state.get(), 200);
     }
@@ -241,13 +241,13 @@ mod tests {
     fn test_atomic_flag() {
         let flag = AtomicFlag::new(false);
         assert!(!flag.is_set());
-        
+
         flag.set();
         assert!(flag.is_set());
-        
+
         flag.clear();
         assert!(!flag.is_set());
-        
+
         assert!(!flag.set_and_return_previous());
         assert!(flag.set_and_return_previous());
     }

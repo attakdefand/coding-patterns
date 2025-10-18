@@ -7,8 +7,5 @@ pub mod two_pointer;
 
 // Re-export the main functions for easier access
 pub use two_pointer::{
-    two_sum_sorted,
-    find_middle,
-    longest_substring_without_repeating,
-    merge_sorted_arrays,
+    find_middle, longest_substring_without_repeating, merge_sorted_arrays, two_sum_sorted,
 };

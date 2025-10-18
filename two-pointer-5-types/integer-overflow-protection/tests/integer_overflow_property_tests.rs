@@ -4,17 +4,14 @@
 //! even when integer overflow or underflow could occur.
 
 use integer_overflow_protection::{
-    two_sum_safe,
-    three_sum_safe,
-    container_with_most_water_safe,
-    find_subarray_sum_safe,
+    container_with_most_water_safe, find_subarray_sum_safe, three_sum_safe, two_sum_safe,
 };
 use proptest::prelude::*;
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     proptest! {
         #[test]
         fn two_sum_safe_returns_valid_indices(nums in prop::collection::vec(-1000i32..1000, 0..100), target in -2000i32..2000) {
@@ -34,7 +31,7 @@ mod tests {
             // If None is returned, there should be no valid pair
             // (We can't easily verify this without reimplementing the algorithm)
         }
-        
+
         #[test]
         fn three_sum_safe_returns_valid_indices(nums in prop::collection::vec(-100i32..100, 0..20), target in -300i32..300) {
             // Test that three_sum_safe always returns valid indices or None
@@ -55,14 +52,14 @@ mod tests {
             // If None is returned, there should be no valid triplet
             // (We can't easily verify this without reimplementing the algorithm)
         }
-        
+
         #[test]
         fn container_with_most_water_safe_non_negative(height in prop::collection::vec(-100i32..100, 0..50)) {
             // Test that container_with_most_water_safe always returns non-negative values
             let result = container_with_most_water_safe(&height);
             prop_assert!(result >= 0);
         }
-        
+
         #[test]
         fn find_subarray_sum_safe_valid_result(nums in prop::collection::vec(-1000i32..1000, 0..50), target in -5000i32..5000) {
             // Test that find_subarray_sum_safe returns valid results
@@ -71,7 +68,7 @@ mod tests {
                 prop_assert!(start < nums.len());
                 prop_assert!(end < nums.len());
                 prop_assert!(start <= end);
-                
+
                 // Calculate the actual sum of the subarray
                 let actual_sum: i64 = nums[start..=end].iter().map(|&x| x as i64).sum();
                 // Check if it matches the target (accounting for possible overflow)

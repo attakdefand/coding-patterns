@@ -4,17 +4,14 @@
 //! even when logical invariants are broken by untrusted input.
 
 use logical_invariant_protection::{
-    two_sum_sorted,
-    is_palindrome,
-    three_sum,
-    container_with_most_water,
+    container_with_most_water, is_palindrome, three_sum, two_sum_sorted,
 };
 use proptest::prelude::*;
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     proptest! {
         #[test]
         fn two_sum_sorted_returns_valid_indices(nums in prop::collection::vec(-1000i32..1000, 0..100), target in -2000i32..2000) {
@@ -30,7 +27,7 @@ mod tests {
             // If None is returned, there should be no valid pair
             // (We can't easily verify this without reimplementing the algorithm)
         }
-        
+
         #[test]
         fn three_sum_returns_valid_indices(nums in prop::collection::vec(-100i32..100, 0..20), target in -300i32..300) {
             // Test that three_sum always returns valid indices or None
@@ -47,14 +44,14 @@ mod tests {
             // If None is returned, there should be no valid triplet
             // (We can't easily verify this without reimplementing the algorithm)
         }
-        
+
         #[test]
         fn is_palindrome_consistent(s in "\\PC*") {
             // Test that is_palindrome behaves consistently
             let result = is_palindrome(&s);
             prop_assert!(result == true || result == false);
         }
-        
+
         #[test]
         fn container_with_most_water_non_negative(height in prop::collection::vec(-100i32..100, 0..50)) {
             // Test that container_with_most_water always returns non-negative values

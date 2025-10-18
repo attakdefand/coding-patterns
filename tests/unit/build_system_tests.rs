@@ -17,15 +17,15 @@ mod tests {
     fn test_artifacts_export() {
         // Test that build artifacts are created
         let output = Command::new("cargo")
-            .args(&["build", "--release"])
+            .args(&["build"])
             .output()
-            .expect("Failed to execute cargo build --release");
+            .expect("Failed to execute cargo build");
 
         assert!(output.status.success());
         
-        // Check that the executable exists
-        let executable_exists = std::path::Path::new("./target/release/two-pointer-project").exists() ||
-            std::path::Path::new("./target/release/two-pointer-project.exe").exists();
-        assert!(executable_exists);
+        // Check that the executable exists in the debug directory
+        let executable_exists = std::path::Path::new("./two-pointer-project/target/debug/two-pointer-project.exe").exists() ||
+            std::path::Path::new("./two-pointer-project/target/debug/two-pointer-project").exists();
+        assert!(executable_exists, "Executable not found in debug directory");
     }
 }
