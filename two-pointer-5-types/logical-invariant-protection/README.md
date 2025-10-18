@@ -102,12 +102,28 @@ The project includes comprehensive tests that verify:
 - Edge case handling
 - Security measures effectiveness
 
+Additional documentation:
+- [Logical Invariant Protection Summary](LOGICAL_INVARIANT_PROTECTION_SUMMARY.md)
+- [Attack Scenarios and Protection Mechanisms](ATTACK_SCENARIOS.md)
+
 ## Running Tests
 
 To run the tests:
 
 ```bash
 cargo test
+```
+
+To run specific test suites:
+```bash
+# Unit tests
+cargo test --test logical_invariant_unit_tests
+
+# Property-based tests
+cargo test --test logical_invariant_property_tests
+
+# Attack-defense tests
+cargo test --test logical_invariant_attack_defense_tests
 ```
 
 ## Key Security Features

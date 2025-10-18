@@ -1,0 +1,63 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: clippy, rustfmt
+
+    - name: Cache dependencies
+      uses: Swatinem/rust-cache@v2
+
+    - name: Check code formatting
+      run: cargo fmt -- --check
+
+    - name: Run Clippy for linting
+      run: cargo clippy -- -D warnings
+
+    - name: Run unit tests
+      run: cargo test --verbose
+
+    - name: Run documentation tests
+      run: cargo test --doc
+
+    - name: Check for unused dependencies
+      run: |
+        cargo install cargo-machete
+        cargo machete
+
+    - name: Check for outdated dependencies
+      run: |
+        cargo install cargo-outdated
+        cargo outdated --exit-code 1
+
+    - name: Run security audit
+      run: |
+        cargo install cargo-audit
+        cargo audit
+
+    - name: Generate code coverage report
+      run: |
+        cargo install cargo-tarpaulin
+        cargo tarpaulin --out Xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: cobertura.xml
+        fail_ci_if_error: false
