@@ -28,9 +28,14 @@ impl AtomicCounter {
         self.value.fetch_add(1, Ordering::Relaxed) + 1
     }
 
-    /// Decrements the counter by 1
+    /// Decrements the counter by 1, but never goes below 0
     pub fn decrement(&self) -> usize {
-        self.value.fetch_sub(1, Ordering::Relaxed) - 1
+        let current = self.value.load(Ordering::Relaxed);
+        if current > 0 {
+            self.value.fetch_sub(1, Ordering::Relaxed) - 1
+        } else {
+            0
+        }
     }
 
     /// Stores a new value
