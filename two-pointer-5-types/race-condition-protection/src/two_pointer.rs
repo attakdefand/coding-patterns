@@ -2,9 +2,12 @@
 
 use crate::concurrent_utils::ThreadSafeArray;
 use crate::telemetry::{start_operation_timer, create_metrics, record_operation};
+use crate::protection::{check_operation_allowed, start_protected_operation};
 use parking_lot::Mutex;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+
+use log;
 
 /// Concurrently finds two numbers in a sorted array that sum to a target value
 ///
@@ -20,6 +23,15 @@ use std::sync::Arc;
 /// # Returns
 /// * `Option<(usize, usize)>` - Indices of the two numbers that sum to target, or None
 pub fn concurrent_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
+    // Check if operation is allowed (rate limiting, circuit breaker)
+    if let Err(_e) = check_operation_allowed("default_client") {
+        log::warn!("Operation blocked: {}", _e);
+        return None;
+    }
+    
+    // Start protected operation with resource tracking
+    let _guard = start_protected_operation("default_client").ok();
+    
     let start_time = start_operation_timer();
     let mut loop_iterations = 0;
     
@@ -38,6 +50,17 @@ pub fn concurrent_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
     for i in 0..nums.len() {
         for j in (i + 1)..nums.len() {
             loop_iterations += 1;
+            
+            // Check iteration limit
+            if let Some(ref guard) = _guard {
+                if guard.check_iteration_limit(loop_iterations as u64).is_err() {
+                    log::warn!("Iteration limit exceeded in concurrent_two_sum");
+                    let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                    record_operation(&metrics);
+                    let result_guard = result.lock();
+                    return *result_guard;
+                }
+            }
             
             // Check if another thread already found a solution
             if found.load(Ordering::Relaxed) {
@@ -82,6 +105,15 @@ pub fn concurrent_two_sum(nums: &[i32], target: i32) -> Option<(usize, usize)> {
 /// # Returns
 /// * `bool` - True if strings are equal, false otherwise
 pub fn concurrent_string_compare(a: &str, b: &str) -> bool {
+    // Check if operation is allowed (rate limiting, circuit breaker)
+    if let Err(_e) = check_operation_allowed("default_client") {
+        log::warn!("Operation blocked: {}", _e);
+        return false;
+    }
+    
+    // Start protected operation with resource tracking
+    let _guard = start_protected_operation("default_client").ok();
+    
     let start_time = start_operation_timer();
     let mut loop_iterations = 0;
     
@@ -105,6 +137,16 @@ pub fn concurrent_string_compare(a: &str, b: &str) -> bool {
     // Compare each byte concurrently
     for i in 0..len {
         loop_iterations += 1;
+        
+        // Check iteration limit
+        if let Some(ref guard) = _guard {
+            if guard.check_iteration_limit(loop_iterations as u64).is_err() {
+                log::warn!("Iteration limit exceeded in concurrent_string_compare");
+                let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                record_operation(&metrics);
+                return false;
+            }
+        }
         
         if mismatch_found.load(Ordering::Relaxed) {
             let metrics = create_metrics(start_time, 1, 0, loop_iterations);
@@ -151,6 +193,15 @@ pub fn concurrent_string_compare(a: &str, b: &str) -> bool {
 /// # Returns
 /// * `Option<usize>` - Index of the target value, or None
 pub fn concurrent_array_search(arr: &[i32], target: i32) -> Option<usize> {
+    // Check if operation is allowed (rate limiting, circuit breaker)
+    if let Err(_e) = check_operation_allowed("default_client") {
+        log::warn!("Operation blocked: {}", _e);
+        return None;
+    }
+    
+    // Start protected operation with resource tracking
+    let _guard = start_protected_operation("default_client").ok();
+    
     let start_time = start_operation_timer();
     let mut loop_iterations = 0;
     
@@ -161,6 +212,17 @@ pub fn concurrent_array_search(arr: &[i32], target: i32) -> Option<usize> {
     // Search concurrently
     for i in 0..arr.len() {
         loop_iterations += 1;
+        
+        // Check iteration limit
+        if let Some(ref guard) = _guard {
+            if guard.check_iteration_limit(loop_iterations as u64).is_err() {
+                log::warn!("Iteration limit exceeded in concurrent_array_search");
+                let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                record_operation(&metrics);
+                let result_guard = result.lock();
+                return *result_guard;
+            }
+        }
         
         if found.load(Ordering::Relaxed) {
             let metrics = create_metrics(start_time, 1, 0, loop_iterations);
@@ -208,6 +270,15 @@ pub fn concurrent_array_search(arr: &[i32], target: i32) -> Option<usize> {
 /// # Returns
 /// * `Vec<i32>` - Intersection of the two arrays
 pub fn concurrent_sorted_intersection(arr1: &[i32], arr2: &[i32]) -> Vec<i32> {
+    // Check if operation is allowed (rate limiting, circuit breaker)
+    if let Err(_e) = check_operation_allowed("default_client") {
+        log::warn!("Operation blocked: {}", _e);
+        return vec![];
+    }
+    
+    // Start protected operation with resource tracking
+    let _guard = start_protected_operation("default_client").ok();
+    
     let start_time = start_operation_timer();
     let mut loop_iterations = 0;
     
@@ -221,6 +292,17 @@ pub fn concurrent_sorted_intersection(arr1: &[i32], arr2: &[i32]) -> Vec<i32> {
 
     while left < arr1.len() && right < arr2.len() {
         loop_iterations += 1;
+        
+        // Check iteration limit
+        if let Some(ref guard) = _guard {
+            if guard.check_iteration_limit(loop_iterations as u64).is_err() {
+                log::warn!("Iteration limit exceeded in concurrent_sorted_intersection");
+                let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                record_operation(&metrics);
+                let result_guard = result.lock();
+                return result_guard.clone();
+            }
+        }
         
         let val1 = match array1.get(left) {
             Some(val) => val,

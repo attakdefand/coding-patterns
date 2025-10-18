@@ -524,6 +524,7 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "crossbeam",
+ "log",
  "once_cell",
  "parking_lot",
  "rand 0.8.5",

@@ -2,9 +2,13 @@
 
 use crate::concurrent_utils::{AtomicCounter, ThreadSafeArray};
 use crate::telemetry::{start_operation_timer, create_metrics, record_operation};
+use crate::protection::{check_operation_allowed, start_protected_operation};
 use parking_lot::Mutex;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Arc;
+
+// Conditional compilation for logging
+use log;
 
 /// Thread-safe state for two-pointer algorithms
 pub struct TwoPointerState {
@@ -145,6 +149,15 @@ impl ConcurrentTwoPointer {
 
     /// Executes the two-pointer algorithm to find a target sum
     pub fn find_sum(&self, target: i32) -> Option<(usize, usize)> {
+        // Check if operation is allowed (rate limiting, circuit breaker)
+        if let Err(_e) = check_operation_allowed("default_client") {
+            log::warn!("Operation blocked: {}", _e);
+            return None;
+        }
+        
+        // Start protected operation with resource tracking
+        let _guard = start_protected_operation("default_client").ok();
+        
         let start_time = start_operation_timer();
         let mut loop_iterations = 0;
         
@@ -160,6 +173,14 @@ impl ConcurrentTwoPointer {
         while self.state.is_active() && !self.found.load(Ordering::Relaxed) {
             loop_iterations += 1;
             self.state.record_loop_iteration();
+            
+            // Check iteration limit
+            if let Some(ref guard) = _guard {
+                if guard.check_iteration_limit(loop_iterations as u64).is_err() {
+                    log::warn!("Iteration limit exceeded in ConcurrentTwoPointer::find_sum");
+                    break;
+                }
+            }
             
             // Get values at current pointer positions
             let values = match self.state.get_values() {
@@ -204,6 +225,12 @@ impl ConcurrentTwoPointer {
 
     /// Safely updates the underlying data
     pub fn update_data(&self, new_data: Vec<i32>) {
+        // Check if operation is allowed (rate limiting, circuit breaker)
+        if let Err(_e) = check_operation_allowed("default_client") {
+            log::warn!("Operation blocked: {}", _e);
+            return;
+        }
+        
         // Deactivate current operation
         self.state.deactivate();
 
@@ -254,6 +281,15 @@ impl ConcurrentStringComparator {
 
     /// Compares the two strings concurrently
     pub fn compare(&self) -> bool {
+        // Check if operation is allowed (rate limiting, circuit breaker)
+        if let Err(_e) = check_operation_allowed("default_client") {
+            log::warn!("Operation blocked: {}", _e);
+            return false;
+        }
+        
+        // Start protected operation with resource tracking
+        let _guard = start_protected_operation("default_client").ok();
+        
         let start_time = start_operation_timer();
         let mut loop_iterations = 0;
         
@@ -277,6 +313,16 @@ impl ConcurrentStringComparator {
         // Compare each byte concurrently
         for i in 0..len {
             loop_iterations += 1;
+            
+            // Check iteration limit
+            if let Some(ref guard) = _guard {
+                if guard.check_iteration_limit(loop_iterations as u64).is_err() {
+                    log::warn!("Iteration limit exceeded in ConcurrentStringComparator::compare");
+                    let metrics = create_metrics(start_time, 1, 0, loop_iterations);
+                    record_operation(&metrics);
+                    return false;
+                }
+            }
             
             if mismatch_found.load(Ordering::Relaxed) {
                 let metrics = create_metrics(start_time, 1, 0, loop_iterations);

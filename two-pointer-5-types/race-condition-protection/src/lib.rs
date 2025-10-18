@@ -17,6 +17,7 @@ pub mod concurrent_utils;
 pub mod race_protection;
 pub mod two_pointer;
 pub mod telemetry;
+pub mod protection;
 
 // Re-export the main functions for easier access
 pub use race_protection::{ConcurrentTwoPointer, TwoPointerState};
@@ -27,4 +28,8 @@ pub use two_pointer::{
 pub use telemetry::{
     get_telemetry_collector, record_operation, start_operation_timer, create_metrics, check_for_anomalies,
     TwoPointerMetrics, TelemetryCollector, TelemetryStatistics
+};
+pub use protection::{
+    ProtectionConfig, ProtectionManager, get_protection_manager, check_operation_allowed,
+    start_protected_operation, OperationGuard
 };
