@@ -1,6 +1,5 @@
 //! Property-based tests for race condition protection
 
-use race_condition_protection::race_protection::ConcurrentStringComparator;
 use race_condition_protection::{
     concurrent_array_search, concurrent_sorted_intersection, concurrent_string_compare,
     concurrent_two_sum, ConcurrentTwoPointer,
