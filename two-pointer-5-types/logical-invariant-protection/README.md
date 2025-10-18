@@ -141,6 +141,8 @@ This repository includes several GitHub Actions workflows for automated code qua
 
 These workflows ensure code quality, security, and consistency across all contributions. For detailed information about our code quality tools and configurations, see [CODE_QUALITY.md](CODE_QUALITY.md).
 
+For information about auto-synchronization features, see [AUTO_SYNC.md](AUTO_SYNC.md).
+
 ## Key Security Features
 
 1. **Assumption Validation**: All functions check their input assumptions
